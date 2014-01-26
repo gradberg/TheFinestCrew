@@ -40,6 +40,8 @@ One aspect of mission progression is that you could accumulate additional ships 
 
 What if in addition to ship subsystems, ships could actually have pieces that break off. Specifically, if you think of the Star Trek federation ship, if one of their warp nacelles where broken off, it would be both unrepairable as its missing, and it would form debris in space that could be an issue in combat. This fits nicely into potential asteroid fields on the map : D
 
+Planets should be very large (so that you can run into them) and their size should be represented on the map. In fact, if ships started having significant size, then zooming in close enough would show the ship taking up multiple locations. For this to not suck though, ships would then almost need a size or shapethat would get displayed.
+
 # Battles and Combat? #
 How do weapons work? How does damage work? Is it a simple HP/Shield number (shields are oriented around the ship?)?
 Ships need to be composed of subsections, that way everything must be repaired in order to work.
