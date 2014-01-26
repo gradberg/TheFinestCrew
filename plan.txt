@@ -1,0 +1,184 @@
+#
+#
+# DONE #
+
+* Keep track of ships' position, show its position information, have ability to steer the ship, and pass time between actions.
+  ** Note that the initial "steering" of the ship will be direct control by player
+  
+* Add in other space objects and moving past them on the map
+  ** Add objects and static map display
+  ** Fix icons that are not visible in the font
+  ** Add ability to zoom in and out of display
+  
+* Setup some sort of source control system  
+
+@@ Command Panels, with both their display and ability to record input from the user, should be pulled out into modules. Each command panel would decide if, based on the player display status, if they would accept a given form of input. 
+
+* Add in full-screen tactical map 
+
+@@ Need a better way to compose displays and inputs for command panels
+
+* Add 'real-time' play. Spin off the user input into go-routines, so that timer events and user input can be taken simultaneously.
+
+* Add in Ship heading versus movement heading
+  ** Display HelmStatus to display nicer
+  
+* Helm Status
+  ** Add indicators that show the ship spun or thrusted. It ought to be cool to watch if
+     you are running autopilot
+  
+* Helm Control
+  @** Direct Pilot
+    @*** Auto-thrust
+    @*** Thrust level
+    @*** Spin Level
+  @** Auto Pilot
+    @*** Switching
+    @*** Full Stop : 
+    @*** Select power setting (which is a percent of normal speed)
+  @** Speed decay
+  
+@@ Split the Ship Helm properties out into their own type. That way helm related API can be separated (though physical status and changes will remain with Ship.go)
+   
+@* Tactical Analysis 
+  @** how to select ship? (Add names?)   (Choose from a list, lose a tick?)
+  @** heading/bearing/course/speed information?
+
+@* Add other ships
+  @** Go about randomly
+  @** Display in Tactical map.
+  @** Add other heading and bearing information (Added directional icons for ships. Bearings go on Tactical Analysis)
+  !** Add in coloring for friendly/hostile/neutral (green friendly, red hostile, blue neutral, white combination)
+  !** Slowly chase you? // need target auto-pilot first so AI can chase ships
+  @** Add 'trails' on the tactical map
+    @*** How does this work with the different zoom levels? Does each ship need to keep a list
+       of past locations?
+
+     
+@* Necessary Auto Pilot stuff
+  @** Naive Target : Choose a location or ship
+  @** Course : Choose a speed and heading    
+
+@@ Add distance display to Targeted Autopilot  
+  
+@@ Crewmember interaction
+  @@@ Convert to having a CrewMember struct that holds its internal AI. That way it can have a name and a flag indicating that it is the player.
+  @@@ Commander panel for sending limited orders to helmsman
+    @@@@ Send the helmsman and order for targeting a ship.
+      @@@@@ make targeting a common control (as this will not be the last control to need it)
+    @@@@ Have the helmsman see this message and act on it.
+      @@@@@ Respond in kind to captain
+      @@@@@ Send a message when lacking orders.
+    @@@@ full stop
+    @@@@ set course
+    @@@@ "Get us out of here"
+  @@@ Have Personnel panel show multiple messages
+  @@@ Have old messages show as dim.
+  @@@ Have helmsmans, at start, send order to captain indicating he is awaiting orders.
+  !!! Commander can chosen additional panels through...something?
+    
+#
+#
+# TODO #  
+  
+-- Naive Combat
+  @@@ At hit points to ships (and display on tactical analysis :/ )  
+  @@@ At hit-sizes to ships
+  @@@ Make the player the commander, and have an ai helmsman to chase enemy ships while the player does whatever.
+  --- Add in weapons panels
+    @@@@ Create struct analogous to ship helm for defning weapon settings
+    @@@@ Start firing forward once per turn
+    @@@@ Have it impact ships
+    @@@@ Added ships showing yellow when damaged
+    @@@@ Add with auto-fire setting
+    @@@@ Add firing re-cycle time        
+    @@@@ Add bearing to Tactical Analysis so I can aim more accurately
+    @@@@ Add manual deflection capability
+    @@@@ Add auto-deflection capability
+    
+    @@@@ Kinetic impact?
+
+    ---- Multiple Defined weapons
+    
+    ---- Ammunition: You have a finite amount of projectiles, which is why you don't waste time firing them all from a really far distance    
+    ---- Lasers: However, you also have low-powered lasers, whose damage really drops off with distance. Lasers will go for decently far distance, but do not exist on the map from turn to turn. Thus to handle the situation where multiple ships get hit by the same laser, it picks the one with the closest distance to the firing ship.
+    
+    @@@@ When targeting, there will be a visual which shows which part of the ship the gun can fire over (using the same compass         mechanisms already coded)
+         
+    @@@@ Projectiles show on tactical map (need this to test anyway)
+    ---- Lasers should show on tactical map too?
+    ---- destroyed ships should be shown, and potentially impacted? (Yes.)
+    
+    @@@@ projectiles have speed decay, and speed (and explosive, and mass) affects their damage potential.
+
+    
+    @@@@ Tactical Map should display projectiles    
+    @@@@ need logging to file to record combat stats and make dev easier
+
+  --- Ships should be ignored when destroyed?
+  --- Ships should continue moving and drag to a stop after being destroyed
+
+-- Less Naive combat
+  --- Pirate ships chase player when near (need new pirate pilot ai)
+  --- Pirate ships shoot at player
+
+-- Commander AI and Player Helmsman
+  --- Personnel panel for helmsman to receive those orders
+  --- If you play the helmsman, and you don't do what the commander says... what happens?
+  
+-- Game Lifecycle
+  --- Intro screen to choose your crewmember and ship
+  --- Death screen
+
+// End of Playable Alpha 1  
+  
+-- Additional weapons/combat:
+  --- Projectiles have precision (in that, when they fire, they have a 'cone' that they fire into)
+  --- Guns that fire multiple projectiles (so that big ships trying to counter little fighters can have shotgun-like guns systems with many projectiles fired per shot and bad precision so that they fan out)
+  --- FireControl should have a full-screen view showing one picture of the ship in the middle, and all of the turrets arranged around it. It'd be a cool view
+  --- Fire At Will mode - Fire at will can work well for very large ships with many gun batteries pointing various directions, and you may want to set the small guns to auto-fire on whatever is in range. 
+         
+    
+  
+  
+-- Personnel
+  --- Full screen panel
+  
+-- Shields
+  --- Shield Control panel
+  --- Display on Tactical Analysis
+  --- Incorporate into combat  
+  
+-- Friendly versus Foe ships
+  --- Display differences in 
+  
+-- Most Advanced Auto Pilot stuff
+  --- Create Maneuver : Plan out a maneuver to be executed  
+  --- Maneuver : execute that maneuver]
+  --- Better Target: Slows down in order to be right behind ship
+    ---- Try to move the COURSE towards the enemy
+  --- Jump Drive
+  
+#
+#
+# PLAYABLE VERSION REQUIREMENTS #
+
+## Alpha 1 
+Two ship choices. One is a pirate fighter in which the one player controls everything, including helm and weapons. The second is a militia Corvette, with two possible crewmembers: Helmsman (duh) and Commander (weapons and orders)
+
+Enemy ships will wander around until you are within range, and which point they will chase you. They will always fire at you when within range. You must fire at them and destroy them to finish 'waves' of enemies. (Slightly more each time?)
+
+Combat: Ships consist only of hit points. Weapons would be projecticle/impact, which would bounce ships around.
+
+On game startup, the player could choose which ship type they want (a fighter to match up against other fighters) or the militia corvette. If the second choice, then they pick which crew member they want to be. The game keeps track of destroyed pirate fighters, and when the player is finally destroyed (which depending on skill, will be when there are just too many enemies firing at you simultaneously), you will be presented with a death screen showing how many kills you got.
+
+#
+#
+# OTHER #
+-- How will keyboard inputs compose nicely across all of the different panels. Specifically, as I implement more and more panels, it means that if they were combined in unexpected ways, it would be a problem if they ever shared keys.
+-- Fix RealTime toggle (Enter) incorrectly being active on full-screens
+-- The player should be considered just another crew member with their decisions made using a IAiCrew module (which prompts the UI?)
+-- Add in ship logs, which is every action by every crew member (and every random event) should be rcorded for future playback?
+-- Need a more sophisticated list/iterator system, as parsing the lists themselves (and finding the next item after the existing item, which requires finding the list element) is quite tedious
+-- Need some sort of logging so if a crash occurs, I can get a crash dump to fix it
+-- Convert all headings and speeds into vectors?
