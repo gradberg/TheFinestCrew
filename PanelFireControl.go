@@ -195,10 +195,13 @@ func (p *PanelFireControl) displaySettingAim(g *Game, r *ConsoleRange) {
 
 
 func (p *PanelFireControl) displayNormal(g *Game, r *ConsoleRange) {
+    // need a better system for colors
+    red := termbox.ColorRed
     brightRed := termbox.ColorRed | termbox.AttrBold
     black := termbox.ColorBlack
     green := termbox.ColorGreen | termbox.AttrBold
     white := termbox.ColorWhite | termbox.AttrBold
+    brightGrey := termbox.ColorWhite
         
     r.Com("[a]", "", 2, 1, black, green )
     r.Com("[z]", "", 2, 9, black, green )
@@ -222,31 +225,43 @@ func (p *PanelFireControl) displayNormal(g *Game, r *ConsoleRange) {
     // Display the selected weapon
     w := g.ThePlayer.FireControlSelectedWeapon
     r.DisplayText(w.DesignName, 19, 2)
-    r.Com("[s]"," Auto Fire",19,3,black, green)
+    
+    ammoFg := red
+    ammoBg := black
+    if (w.Ammunition == 0) {
+        ammoFg = black
+        ammoBg = brightGrey
+    } else if (w.Ammunition <= 10) {
+        ammoFg = black
+        ammoBg = brightRed
+    }
+    
+    r.DisplayTextWithColor(fmt.Sprintf("  Ammo (%5d)  ", w.Ammunition), 20,3, ammoFg, ammoBg)
+    r.Com("[s]"," Auto Fire",19,4,black, green)
     if (w.AutoFire) {
-        r.DisplayTextWithColor(" ON ", 33,3, black, white)
+        r.DisplayTextWithColor(" ON ", 33,4, black, white)
     } else {    
-        r.DisplayText("OFF ", 33,3)
+        r.DisplayText("OFF ", 33,4)
     }   
     
     var ast string    
     ast = " "; if w.TargetType == TargetTypeManual { ast = "*" }
-    r.DisplayTextWithColor(ast, 18, 4, brightRed, black)
-    r.Com("[x]", " Manual Aim", 19,4, black, green)
-    r.DisplayTextWithColor(ast, 33, 4, brightRed, black)
+    r.DisplayTextWithColor(ast, 18, 5, brightRed, black)
+    r.Com("[x]", " Manual Aim", 19,5, black, green)
+    r.DisplayTextWithColor(ast, 33, 5, brightRed, black)
     if (w.TargetType == TargetTypeManual) {
         // display the selected fire angle
         absoluteAngle := AddAngles(w.FiringAngle, g.PlayerShip.ShipHeadingInDegrees)
-        r.DisplayText(fmt.Sprintf("R:%05.1f  A:%05.1f", w.FiringAngle, absoluteAngle), 20,5)
+        r.DisplayText(fmt.Sprintf("R:%05.1f  A:%05.1f", w.FiringAngle, absoluteAngle), 20,6)
     }
    
     
     ast = " "; if w.TargetType == TargetTypeTarget { ast = "*" }
-    r.DisplayTextWithColor(ast, 18, 6, brightRed, black)
-    r.Com("[c]", " Set Target" + ast, 19, 6, black, green)
-    r.DisplayTextWithColor(ast, 33, 6, brightRed, black)
+    r.DisplayTextWithColor(ast, 18, 7, brightRed, black)
+    r.Com("[c]", " Set Target" + ast, 19, 7, black, green)
+    r.DisplayTextWithColor(ast, 33, 7, brightRed, black)
     if (w.TargetType == TargetTypeTarget && w.TargetShip != nil) { 
-        r.DisplayText(w.TargetShip.GetName(), 20, 7)
+        r.DisplayText(w.TargetShip.GetName(), 20, 8)
     }
    
 /*   
@@ -261,7 +276,9 @@ func (p *PanelFireControl) writeNameWithReload(g *Game, r *ConsoleRange, w *Ship
     darkGrey := termbox.ColorBlack | termbox.AttrBold
 
     fg := termbox.ColorRed
-    if (w.AutoFire) {
+    if (w.Ammunition == 0) {
+        fg = termbox.ColorWhite
+    } else if (w.AutoFire) {
         fg = termbox.ColorRed | termbox.AttrBold
     }
 

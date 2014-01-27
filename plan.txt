@@ -100,16 +100,15 @@
     
     @@@@ Kinetic impact?
 
-    ---- Multiple Defined weapons
+    @@@@ Multiple Defined weapons
     
-    ---- Ammunition: You have a finite amount of projectiles, which is why you don't waste time firing them all from a really far distance    
+    @@@@ Ammunition: You have a finite amount of projectiles, which is why you don't waste time firing them all from a really far distance    
     ---- Lasers: However, you also have low-powered lasers, whose damage really drops off with distance. Lasers will go for decently far distance, but do not exist on the map from turn to turn. Thus to handle the situation where multiple ships get hit by the same laser, it picks the one with the closest distance to the firing ship.
     
     @@@@ When targeting, there will be a visual which shows which part of the ship the gun can fire over (using the same compass         mechanisms already coded)
          
     @@@@ Projectiles show on tactical map (need this to test anyway)
     ---- Lasers should show on tactical map too?
-    ---- destroyed ships should be shown, and potentially impacted? (Yes.)
     
     @@@@ projectiles have speed decay, and speed (and explosive, and mass) affects their damage potential.
 
@@ -117,6 +116,11 @@
     @@@@ Tactical Map should display projectiles    
     @@@@ need logging to file to record combat stats and make dev easier
 
+  
+    
+-- Destroyed ship
+  --- Less than zero: Show as destroyed
+  --- destroyed ships should be shown, and potentially impacted? (Yes.)  
   --- Ships should be ignored when destroyed?
   --- Ships should continue moving and drag to a stop after being destroyed
 
@@ -163,6 +167,11 @@
   --- Better Target: Slows down in order to be right behind ship
     ---- Try to move the COURSE towards the enemy
   --- Jump Drive
+  >>> Should manuever's just be pre-planned things like "Circle" (circle it at a distance), "Strafe"?
+      Maybe these should just be interest manuevers that a captain can order and the helmsman does automatically
+      (Which becomes fun when you are in charge of a fleet, you order the whole fleet to strafe a target, you order
+       your helmsman to do so, and they order theirs to do so.)
+  
   
 #
 #

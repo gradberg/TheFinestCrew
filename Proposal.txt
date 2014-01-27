@@ -53,6 +53,18 @@ So similiar to how a traditional roguelike has dungeon levels, this has missions
 
 Maps should have a decent amount on them, of which only 25% is relevannt to your given mission. Missions could include Destroy a specific fleet, escort a friendly ship to avoid destruction, attack a planet, retrieve a disabled friendly ship from an asteroid field.
 
+# Game Modes #
+
+Career Mode: You start as a lower-level crewmember and advance (helmsman -> communications -> defense officer, tactical officer, captain, admiral). Each mission or so that the ship survives and for which you do a 'good' job, you would advance. 
+
+>>> Career Mode needs a GOAL. Is there something you can acheive all the way at the end? What is it? Does it end with you as the admiral of a big fleet (in your flagship, of course), ordering fleet movements across a very large map, to conquer the enemy capital planet?
+
+Survival: 
+
+Preset Battles: 
+
+Custom Battles:
+
 # Command Panels #
 
 ## Helm Control

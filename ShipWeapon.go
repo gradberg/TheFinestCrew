@@ -30,6 +30,7 @@ type ShipWeapon struct {
     
     // # Gun status stuff # (reload, remaining ammunition, etc)
     CurrentCycle int // how many turns until the ship can fire again
+    Ammunition int // remaining ammunitions
     
     // # Targetting stuff # (No real point in having a separate fire control object
     AutoFire bool    
@@ -47,6 +48,7 @@ type ShipWeapon struct {
     DesignDrag float64 // How much each turn a projectile slows down
     DesignDamage float64 // The maximum damage caused. For guns, this damage rating decreases as the projectile slows
     DesignCycle int // the number of turns between shots
+    DesignAmmunition int // maximum (starting) amount of rounds a projectile or missile weapon has
     //DesignPrecision float64 // total width that the gun randomly fires in (thus low is better)
     //DesignDrift float64 // how much a projectile can drift to a different heading each tick.
     
@@ -75,10 +77,12 @@ func NewShipWeapon(firingArcStart, firingArcEnd float64, designCycle int) *ShipW
 }
 */
 // Set of common weapon definitions
-func New1KgGun(emplacementName string, firingArcStart, firingArcEnd float64) *ShipWeapon {
+func New1KgGun(emplacementName string, firingArcStart, firingArcEnd float64, ammunition int) *ShipWeapon {
     w := &ShipWeapon { }
     w.FiringArcStart = firingArcStart
     w.FiringArcEnd = firingArcEnd
+    w.DesignAmmunition = ammunition
+    w.Ammunition = ammunition
     
     // ---- intelligently find the middle-point?
     if (w.IsInFiringArc(0.0)) {

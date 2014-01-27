@@ -134,12 +134,19 @@ func (g *Game) processWeapons() {
                         
             // if its not ready to fire, just cycle it.
             if (w.CurrentCycle > 0) {
-                w.CurrentCycle --
+                // Only cycle if there is ammo, otherwise it doesn't make logical sense
+                // that it is loaded with no ammo
+                if (w.Ammunition > 0) {
+                    w.CurrentCycle --
+                }
                 continue
             }
             
             // If the weapon is not set to fire... don't fire!
             if (!w.AutoFire) { continue }
+            
+            // if the weapon is projectile based and out of ammunition, don't fire
+            if (w.Ammunition == 0) { continue }
             
             // create new projectile (if set to fire?)?
             // At some point, call the FireControl object or the ship and ask it to generate projectiles.
@@ -163,6 +170,7 @@ func (g *Game) processWeapons() {
             
             // Set the weapon back to its reload setting
             w.CurrentCycle = w.DesignCycle
+            w.Ammunition --
             
         }
         
@@ -338,9 +346,9 @@ func (g *Game) doSetupForDevelopment() {
     g.PlayerShip.DesignName = "militia corvette"
     g.PlayerShip.HitSize = 1.3
     g.PlayerShip.HitPoints = 50.0
-    g.PlayerShip.Weapons.PushBack(New1KgGun("Main Cannon", 300, 60))
-    g.PlayerShip.Weapons.PushBack(New1KgGun("Port Cannon", 180, 300))
-    g.PlayerShip.Weapons.PushBack(New1KgGun("Strbd. Cannon", 60, 180))
+    g.PlayerShip.Weapons.PushBack(New1KgGun("Main Cannon", 300, 60, 100))
+    g.PlayerShip.Weapons.PushBack(New1KgGun("Port Cannon", 180, 300, 25))
+    g.PlayerShip.Weapons.PushBack(New1KgGun("Strbd. Cannon", 60, 180, 25))
     
     playerCrew := NewCrewMember("Victor", "Snapes", nil, CrewRoleCommander)
     playerCrew.IsPlayer = true
