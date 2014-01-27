@@ -81,7 +81,12 @@ func New1KgGun(emplacementName string, firingArcStart, firingArcEnd float64) *Sh
     w.FiringArcEnd = firingArcEnd
     
     // ---- intelligently find the middle-point?
-    w.FiringAngle = 0.0
+    if (w.IsInFiringArc(0.0)) {
+        w.FiringAngle = 0.0
+    } else {
+        w.FiringAngle = firingArcStart
+    }
+    
     
     w.EmplacementName = emplacementName
     

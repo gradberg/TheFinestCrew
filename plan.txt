@@ -77,6 +77,8 @@
   @@@ Have helmsmans, at start, send order to captain indicating he is awaiting orders.
   !!! Commander can chosen additional panels through...something?
     
+@@ Add to GitHub
+    
 #
 #
 # TODO #  
@@ -130,6 +132,9 @@
   --- Intro screen to choose your crewmember and ship
   --- Death screen
 
+-- RogueBasin?
+-- Temple of the Roguelike?
+  
 // End of Playable Alpha 1  
   
 -- Additional weapons/combat:

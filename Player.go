@@ -99,3 +99,17 @@ func (p *Player) FireControlAngleSmallClockwise(s *ShipWeapon) {
     if (s.IsInFiringArc(p.FireControlAngle) == true) { return } 
     p.FireControlAngle = s.FiringArcEnd
 }
+
+func (p *Player) FireControlSelectedWeaponPrevious() {
+    p.FireControlSelectedWeapon = p.Game.PlayerShip.GetPreviousWeapon(p.FireControlSelectedWeapon)
+    if (p.FireControlSelectedWeapon == nil) {
+        p.FireControlSelectedWeapon = p.Game.PlayerShip.GetPreviousWeapon(p.FireControlSelectedWeapon)
+    }
+}
+func (p *Player) FireControlSelectedWeaponNext() {
+    p.FireControlSelectedWeapon = p.Game.PlayerShip.GetNextWeapon(p.FireControlSelectedWeapon)
+    if (p.FireControlSelectedWeapon == nil) {
+        p.FireControlSelectedWeapon = p.Game.PlayerShip.GetNextWeapon(p.FireControlSelectedWeapon)
+    }
+}
+         

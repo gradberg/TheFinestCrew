@@ -79,6 +79,11 @@ func (p *PanelFireControl) processInputNormal(g *Game, ch rune, key termbox.Key)
 
     w := g.ThePlayer.FireControlSelectedWeapon
     switch ch {
+        case 'a':
+            g.ThePlayer.FireControlSelectedWeaponPrevious()
+        case 'z':
+            g.ThePlayer.FireControlSelectedWeaponNext()
+    
         case 's':
             w.AutoFire = !w.AutoFire
         
@@ -195,15 +200,28 @@ func (p *PanelFireControl) displayNormal(g *Game, r *ConsoleRange) {
     green := termbox.ColorGreen | termbox.AttrBold
     white := termbox.ColorWhite | termbox.AttrBold
         
-    w := g.ThePlayer.FireControlSelectedWeapon
+    r.Com("[a]", "", 2, 1, black, green )
+    r.Com("[z]", "", 2, 9, black, green )
     
-    // ---- the > should indicate which one is selected and displayed
-    r.DisplayTextWithColor(">", 1, 2, brightRed, black)
+    // ---- at some point, this will break, and will need to be changed
+    //      to SCROLL.
     
-    p.writeNameWithReload(g,r,w,2,2)
-    
-    r.DisplayText(w.DesignName, 19, 2)
+    // Display the list of weapons
+    index := 0
+    for we := g.PlayerShip.Weapons.Front(); we != nil; we = we.Next() {
+        w := we.Value.(*ShipWeapon)
         
+        if (w == g.ThePlayer.FireControlSelectedWeapon) {
+            r.DisplayTextWithColor(">", 1, 2 + index, brightRed, black)
+        }
+        p.writeNameWithReload(g,r,w,2,2 + index)
+        
+        index++
+    }
+    
+    // Display the selected weapon
+    w := g.ThePlayer.FireControlSelectedWeapon
+    r.DisplayText(w.DesignName, 19, 2)
     r.Com("[s]"," Auto Fire",19,3,black, green)
     if (w.AutoFire) {
         r.DisplayTextWithColor(" ON ", 33,3, black, white)

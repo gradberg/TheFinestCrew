@@ -336,9 +336,11 @@ func (g *Game) doSetupForDevelopment() {
     g.PlayerShip.Helm.IsDirectPilot = true
     g.PlayerShip.Name = "Centauri II"
     g.PlayerShip.DesignName = "militia corvette"
-    g.PlayerShip.HitSize = 1.0
+    g.PlayerShip.HitSize = 1.3
     g.PlayerShip.HitPoints = 50.0
     g.PlayerShip.Weapons.PushBack(New1KgGun("Main Cannon", 300, 60))
+    g.PlayerShip.Weapons.PushBack(New1KgGun("Port Cannon", 180, 300))
+    g.PlayerShip.Weapons.PushBack(New1KgGun("Strbd. Cannon", 60, 180))
     
     playerCrew := NewCrewMember("Victor", "Snapes", nil, CrewRoleCommander)
     playerCrew.IsPlayer = true
@@ -403,7 +405,7 @@ func (g *Game) createRandomAiPirateFighter() *Ship {
     aiShip.MaxBackwardThrust = 0.1
     aiShip.MaxRotation = 18 // manueverable little thing
     aiShip.CrewMembers.PushBack(NewCrewMember("Unknown", "Scoundrel", &AiHelmsmanTest{}, CrewRolePilot))
-    aiShip.HitSize = 0.5
+    aiShip.HitSize = 0.7
     aiShip.HitPoints = 10.0
     aiShip.Name = "Pirate Fighter"
     aiShip.DesignName = "unknown design"    
