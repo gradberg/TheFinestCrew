@@ -106,7 +106,7 @@ func New1MwLaser(emplacementName string, firingArcStart, firingArcEnd float64) *
     
     w.WeaponType = WeaponTypeLaser
     w.DesignName = "1 MW Laser"
-    w.DesignDistance = 100.0
+    w.DesignDistance = 180.0
     w.DesignDamage = 3.0     
     w.DesignCycle = 1
     

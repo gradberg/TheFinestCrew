@@ -166,7 +166,7 @@ func (g *Game) processShipWeapon(s *Ship, w *ShipWeapon) {
                 Point: s.Point,
                 Heading: shotAngle,                        
                 OriginShip: s,
-                DesignSpeed: w.DesignDistance,
+                Speed: w.DesignDistance,
                 DesignDamage: w.DesignDamage,
             }
             g.LaserProjectiles.PushBack(p)                    
@@ -202,6 +202,64 @@ func (g *Game) processShipWeapon(s *Ship, w *ShipWeapon) {
 
 func (g *Game) processLasers() {
     // ---- todo (after adding in the tactical map logic to DISPLAY lasers)
+    
+    for pe := g.LaserProjectiles.Front(); pe != nil; pe = pe.Next() {
+        p := pe.Value.(*Projectile)
+        
+        // Get a list of any ships it would impact
+        startPoint := p.Point
+        endPoint := p.GetFuturePoint()
+        impactedShips := make([]*Ship, 0, 10)
+        for se := g.Ships.Front(); se != nil; se = se.Next() {
+            s := se.Value.(*Ship)
+            if (p.OriginShip == s) { continue }
+            
+            impactDistance := DistanceFromLineSegment(s.Point, startPoint, endPoint)
+            if (impactDistance <= s.HitSize) {
+                impactedShips = append(impactedShips, s)
+                LogCalc("Laser *MIGHT HIT* ship %s at %f,%f by laser going from %f,%f to %f,%f",
+                    s.Name, s.Point.X(), s.Point.Y(), 
+                    startPoint.X(), startPoint.Y(), 
+                    endPoint.X(), endPoint.Y(),
+                )
+            }
+        }
+        
+        // if it hit nothing, just continue
+        if len(impactedShips) == 0 { continue }
+        
+        // go through that list of ships, and impact the one closest to
+        // where the laser started (since in 99% of situations that is
+        // the one it would impact, and the other 1% would be too ambigious
+        // for anyone to care)
+        closestShip := impactedShips[0]
+        closestAngle, closestDistance := closestShip.Point.Subtract(startPoint).ToVector()
+        for i := 1; i < len(impactedShips); i++ {            
+            s := impactedShips[i]
+            angle, distance := s.Point.Subtract(startPoint).ToVector()
+            if (distance < closestDistance) {
+                closestShip = s
+                closestDistance = distance
+                closestAngle = angle
+            } 
+        }        
+        
+        // Set the laser's end-point to match the ship's loaction 
+        // and damage the ship
+        s := closestShip
+        damage := p.DesignDamage * (p.Speed - closestDistance) / p.Speed
+        s.HitPoints = Round(s.HitPoints - damage, 1)        
+        LogCalc("Laser *HIT* Ship %s at %f, %f for damage %f",
+            s.Name, s.Point.X(), s.Point.Y(), damage,
+        )                    
+        s.WasHit = true
+        
+        p.Speed = closestDistance
+        p.Heading = closestAngle
+        
+        
+                
+    }
 }
 
 func (g *Game) processProjectiles() {
@@ -228,8 +286,8 @@ func (g *Game) processProjectiles() {
                 damage := p.DesignDamage * p.Speed / p.DesignSpeed
                 s.HitPoints = Round(s.HitPoints - damage, 1)
                 
-                LogCalc("Projectile  *HIT* Ship %s at %f, %f by projectile at %f, %f, pHeading %f, pSpeed %f, distance from path %f",
-                    s.Name, s.Point.X(), s.Point.Y(), p.Point.X(), p.Point.Y(), p.Heading, p.Speed, distance,
+                LogCalc("Projectile  *HIT* Ship %s at %f, %f by projectile at %f, %f, pHeading %f, pSpeed %f, distance from path %f, damage %f",
+                    s.Name, s.Point.X(), s.Point.Y(), p.Point.X(), p.Point.Y(), p.Heading, p.Speed, distance, damage,
                 )                    
                 
                 // Transfer impact to the ship's momentum IF IT IS A PROJECTILE OR MISSILE

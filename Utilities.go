@@ -156,7 +156,7 @@ func GetShortestTurn(currentAngle, targetAngle float64) (float64, bool) {
 }
 
 type LinePoint struct { X, Y int }
-func BresenhamLine(x0, y0, x1, y1 int) []LinePoint {
+/* func BresenhamLine(x0, y0, x1, y1 int) []LinePoint {
     points := make([]LinePoint, 0, 100)
     
     deltaX := x1 - x0
@@ -176,7 +176,7 @@ func BresenhamLine(x0, y0, x1, y1 int) []LinePoint {
     }
     
     return points
-}
+} */
 func BresenhamLine2(x0, y0, x1, y1 int) []LinePoint {
     points := make([]LinePoint, 0, 100)
     

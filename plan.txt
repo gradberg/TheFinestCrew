@@ -78,16 +78,13 @@
   !!! Commander can chosen additional panels through...something?
     
 @@ Add to GitHub
-    
-#
-#
-# TODO #  
   
--- Naive Combat
+
+@@ Naive Combat
   @@@ At hit points to ships (and display on tactical analysis :/ )  
   @@@ At hit-sizes to ships
   @@@ Make the player the commander, and have an ai helmsman to chase enemy ships while the player does whatever.
-  --- Add in weapons panels
+  @@@ Add in weapons panels
     @@@@ Create struct analogous to ship helm for defning weapon settings
     @@@@ Start firing forward once per turn
     @@@@ Have it impact ships
@@ -103,17 +100,17 @@
     @@@@ Multiple Defined weapons
     
     @@@@ Ammunition: You have a finite amount of projectiles, which is why you don't waste time firing them all from a really far distance    
-    ---- Lasers: However, you also have low-powered lasers, whose damage really drops off with distance. Lasers will go for decently far distance, but do not exist on the map from turn to turn. Thus to handle the situation where multiple ships get hit by the same laser, it picks the one with the closest distance to the firing ship.
+    @@@@ Lasers: However, you also have low-powered lasers, whose damage really drops off with distance. Lasers will go for decently far distance, but do not exist on the map from turn to turn. Thus to handle the situation where multiple ships get hit by the same laser, it picks the one with the closest distance to the firing ship.
       
-      ----- Code Breseham Line algorithm w/ unit tests
-      ----- Adapt line algorithm to tactical map
-      ----- Display Lasers to Tactical Map
-      ----- Have Lasers impact ship
+      @@@@@ Code Breseham Line algorithm w/ unit tests
+      @@@@@ Adapt line algorithm to tactical map
+      @@@@@ Display Lasers to Tactical Map
+      @@@@@ Have Lasers impact ship
     
     @@@@ When targeting, there will be a visual which shows which part of the ship the gun can fire over (using the same compass         mechanisms already coded)
          
     @@@@ Projectiles show on tactical map (need this to test anyway)
-    ---- Lasers should show on tactical map too?
+    @@@@ Lasers should show on tactical map too?
     
     @@@@ projectiles have speed decay, and speed (and explosive, and mass) affects their damage potential.
 
@@ -122,7 +119,10 @@
     @@@@ need logging to file to record combat stats and make dev easier
 
   
-    
+#
+#
+# TODO #  
+
 -- Destroyed ship
   --- Less than zero: Show as destroyed
   --- destroyed ships should be shown, and potentially impacted? (Yes.)  

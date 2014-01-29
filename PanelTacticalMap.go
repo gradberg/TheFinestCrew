@@ -110,24 +110,20 @@ func (g *Game) fillGridWithInformation(r *ConsoleRange, grid [][]spot) {
     
     // Loop over every relevant object to display and figure out which dot it should be in.    
     for e := g.LaserProjectiles.Front(); e != nil; e = e.Next() {
-        //p := e.Value.(*Projectile)
+        p := e.Value.(*Projectile)
         
-        // figure out where the start and end points lie. 
-        // Use those to loop from the beginning of the line to the end, adding any points that
-        // SHOULD be displayed into the mapSpot.
-        // I just need to figure out what the algorithm is for doing that aliasing.
-        // https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-        
-        
-        // Alright, the algorithm is WORKING (albeit probably not for vertical lines)
-        // So what I do is find out what points the laser started and ended. Then I just use
-        // the line algorithm to find all the middle points. Last, any that are actuall visible 
-        // get displayed to a string
-        
-        
-        
-        
-        
+        // For lasers, this finds the start and end points, uses the Bresenham line algorithm to determine
+        // how to plot the line across the grid, then loops over all those points and adds them to the
+        // grid if they are in the visible window.        
+        rX0, rY0 := determineRelativeMapSpot(g.PlayerShip.Point, p.Point, g.ThePlayer.TacticalMapScale)
+        rX1, rY1 := determineRelativeMapSpot(g.PlayerShip.Point, p.GetFuturePoint(), g.ThePlayer.TacticalMapScale)
+        points := BresenhamLine2(rX0 + centerX, rY0 + centerY, rX1 + centerX, rY1 + centerY)        
+        for i := 0; i < len(points); i++ {
+            point := points[i]
+            if (point.X < 0 || point.X >= w-2 || point.Y < 0 || point.Y >= h - 2) { continue }
+            grid[point.Y][point.X].spotType = combineSpotType(grid[point.Y][point.X].spotType, spot_LASER)
+            grid[point.Y][point.X].laser = p
+        }        
     }
     for e := g.Projectiles.Front(); e != nil; e = e.Next() {
         p := e.Value.(*Projectile)
@@ -188,6 +184,8 @@ func determineRelativeMapSpot(center Point, test Point, mapSpotSize float64) (in
     return x, y
 }
 
+// ---- this is going to need to be re-written to handle a nice flexible precedence
+//      system for displaying items to the map
 func combineSpotType(current, additional spotType) spotType {
     if additional == spot_TRAIL {
         if (current == spot_EMPTY) {        
@@ -198,8 +196,17 @@ func combineSpotType(current, additional spotType) spotType {
             return current        
         }
     }
+    if additional == spot_LASER {
+        if (current == spot_EMPTY || current == spot_TRAIL) {        
+            // if the spot is blank, then set it as a trail, 
+            return spot_LASER
+        } else {
+            // otherwise don't overwrite any more useful information on the map
+            return current        
+        }
+    }
     if additional == spot_PROJECTILE {
-        if (current == spot_EMPTY || current == spot_TRAIL) {            
+        if (current == spot_EMPTY || current == spot_TRAIL || current == spot_LASER) {            
             return spot_PROJECTILE
         } else {
             // projectiles don't overwrite more useful information
@@ -238,12 +245,16 @@ func displayGrid(r *ConsoleRange, grid [][]spot) {
     for rowIndex := 0; rowIndex < len(grid); rowIndex++ {        
         for colIndex := 0; colIndex < len(grid[rowIndex]); colIndex++ {            
             var spot string = "?"
-            isTrail := false
+            isTrail := false       
+            isLaser := false
             switch grid[rowIndex][colIndex].spotType {
                 case spot_EMPTY: spot=map_BLANK                
                 case spot_TRAIL:
                     spot=map_BLANK
                     isTrail = true
+                case spot_LASER:
+                    spot = Compass_GetLineHeadingIcon(grid[rowIndex][colIndex].laser.Heading)
+                    isLaser = true
                 case spot_PROJECTILE:
                     spot=map_PROJECTILE
                     isTrail = true
@@ -266,15 +277,15 @@ func displayGrid(r *ConsoleRange, grid [][]spot) {
                 bg = termbox.ColorYellow | termbox.AttrBold
             }
             
-            
+            fg := termbox.ColorRed
             if (colIndex == centerX && rowIndex == centerY) {
-                // Display center highlighting differently
-                r.DisplayTextWithColor(spot, colIndex + 1, displayY, termbox.ColorWhite | termbox.AttrBold, bg)
-            } else if isTrail {           
-                r.DisplayTextWithColor(spot, colIndex + 1, displayY, termbox.ColorWhite, bg)             
-            } else {           
-                r.DisplayTextWithColor(spot, colIndex + 1, displayY, termbox.ColorRed, bg)             
-            }           
+            } else if isTrail {
+                fg = termbox.ColorWhite | termbox.AttrBold
+            } else if isLaser {
+                fg = termbox.ColorGreen | termbox.AttrBold
+            }
+            
+            r.DisplayTextWithColor(spot, colIndex + 1, displayY, fg, bg)
         }            
     }
 }
