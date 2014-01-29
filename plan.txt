@@ -104,6 +104,11 @@
     
     @@@@ Ammunition: You have a finite amount of projectiles, which is why you don't waste time firing them all from a really far distance    
     ---- Lasers: However, you also have low-powered lasers, whose damage really drops off with distance. Lasers will go for decently far distance, but do not exist on the map from turn to turn. Thus to handle the situation where multiple ships get hit by the same laser, it picks the one with the closest distance to the firing ship.
+      
+      ----- Code Breseham Line algorithm w/ unit tests
+      ----- Adapt line algorithm to tactical map
+      ----- Display Lasers to Tactical Map
+      ----- Have Lasers impact ship
     
     @@@@ When targeting, there will be a visual which shows which part of the ship the gun can fire over (using the same compass         mechanisms already coded)
          
@@ -196,3 +201,4 @@ On game startup, the player could choose which ship type they want (a fighter to
 -- Need a more sophisticated list/iterator system, as parsing the lists themselves (and finding the next item after the existing item, which requires finding the list element) is quite tedious
 -- Need some sort of logging so if a crash occurs, I can get a crash dump to fix it
 -- Convert all headings and speeds into vectors?
+-- multi-tick actions should let the game display the screen changes just like if you had realtime turned on, except you cannot stop it or pause it until those ticks are finished.

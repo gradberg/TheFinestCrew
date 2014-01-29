@@ -26,9 +26,11 @@ type Game struct {
     
     Rand *rand.Rand    
     
-    Projectiles *list.List
+    Projectiles *list.List // Projectiles that are still flying around
+    LaserProjectiles *list.List // List of lasers fired last tick (which is displayed on the map)
     
     PendingMessages *list.List
+    
 }
 
 // Creates a new game object so that the actual game lifecycle can begin
@@ -44,6 +46,7 @@ func NewGame() *Game {
         Rand: rand.New(source),
         PendingMessages: list.New(),
         Projectiles: list.New(),
+        LaserProjectiles: list.New(),
     }    
     g.ThePlayer = NewPlayer(g)
     
@@ -84,6 +87,8 @@ func (g *Game) processTick(ir *InputResult) {
         // before ship movement so that in their first turn, projectiles should be able to impact
         // a ship where it was at the start of a turn. After that it is a crap shoot
         g.processWeapons()
+        g.processLasers()        
+        g.processProjectiles()    
         
         // Last process ship movement, as they are essentially the slowest objects.
         g.processShipMovement()        
@@ -122,37 +127,58 @@ func (g *Game) processAiCharacters() {
 }
 
 func (g *Game) processWeapons() {
-    // loop over each ship, firing any weapons as appropriate
-    //   projectiles spawn projectiles
-    //   lasers hit immediately.
-    // go through each ship's crewmembers. 
+    // clear the list of lasers fired last turn
+    g.LaserProjectiles.Init()
+    
+    // Loop over each ship and each weapon, creating fired lasers and projectiles as appropriate
     for se := g.Ships.Front(); se != nil; se = se.Next() {
         s := se.Value.(*Ship)
         
         for we := s.Weapons.Front(); we != nil; we = we.Next() {
             w := we.Value.(*ShipWeapon)
-                        
-            // if its not ready to fire, just cycle it.
-            if (w.CurrentCycle > 0) {
-                // Only cycle if there is ammo, otherwise it doesn't make logical sense
-                // that it is loaded with no ammo
-                if (w.Ammunition > 0) {
-                    w.CurrentCycle --
-                }
-                continue
+            g.processShipWeapon(s, w)
+        }        
+    }   
+}
+
+func (g *Game) processShipWeapon(s *Ship, w *ShipWeapon) {
+    // if its not ready to fire, just cycle it.
+    if (w.CurrentCycle > 0) {
+        // Only cycle if there is ammo, otherwise it doesn't make logical sense
+        // that it is loaded with no ammo
+        if (w.Ammunition > 0 || w.WeaponType == WeaponTypeLaser) {
+            w.CurrentCycle --
+        }
+        return
+    }
+    
+    // If the weapon is not set to fire... don't fire!
+    if (!w.AutoFire) { return }    
+    
+    w.SetFiringAngle(s)
+    shotAngle := AddAngles(w.FiringAngle, s.ShipHeadingInDegrees)            
+    switch (w.WeaponType) {
+        case WeaponTypeLaser:
+            // This just SPAWNS the lasers. They impact just like projectiles. This is to prevent
+            // a ship getting hit with a laser fired by an 'early' ship from being destroyed and unable
+            // to fire its lasers. It makes it fair.                   
+            p := &Projectile {
+                Point: s.Point,
+                Heading: shotAngle,                        
+                OriginShip: s,
+                DesignSpeed: w.DesignDistance,
+                DesignDamage: w.DesignDamage,
             }
+            g.LaserProjectiles.PushBack(p)                    
             
-            // If the weapon is not set to fire... don't fire!
-            if (!w.AutoFire) { continue }
+            LogCalc("Laser fired from ship. sHeading [%f], pHeading [%f]", s.ShipHeadingInDegrees, p.Heading)
             
+            // weapon must now reload
+            w.CurrentCycle = w.DesignCycle
+        
+        case WeaponTypeGun:
             // if the weapon is projectile based and out of ammunition, don't fire
-            if (w.Ammunition == 0) { continue }
-            
-            // create new projectile (if set to fire?)?
-            // At some point, call the FireControl object or the ship and ask it to generate projectiles.
-     
-            w.SetFiringAngle(s)
-            shotAngle := AddAngles(w.FiringAngle, s.ShipHeadingInDegrees)
+            if (w.Ammunition == 0) { return }
             
             p := &Projectile {
                 Point: s.Point,
@@ -166,18 +192,20 @@ func (g *Game) processWeapons() {
             g.Projectiles.PushBack(p)
             
             // ---- will be more useful once I add random deflection in
-            LogCalc("Projectile Fired from ship. sHeading [%f], pHeading [%f]", s.ShipHeadingInDegrees, p.Heading)
+            LogCalc("Projectile fired from ship. sHeading [%f], pHeading [%f]", s.ShipHeadingInDegrees, p.Heading)
             
             // Set the weapon back to its reload setting
             w.CurrentCycle = w.DesignCycle
-            w.Ammunition --
-            
-        }
-        
-        
-        
-    }   
+            w.Ammunition --            
+    } 
+}
 
+func (g *Game) processLasers() {
+    // ---- todo (after adding in the tactical map logic to DISPLAY lasers)
+}
+
+func (g *Game) processProjectiles() {
+    // Do projectile hit detection
     projectilesToRemove := list.New()
     // loop over every projectile, moving it and having it impact ships as appropriate    
     for pe := g.Projectiles.Front(); pe != nil; pe = pe.Next() {
@@ -232,8 +260,8 @@ func (g *Game) processWeapons() {
     for pe := projectilesToRemove.Front(); pe != nil; pe = pe.Next() {
         g.Projectiles.Remove(pe.Value.(*list.Element))
     }
-
 }
+
 
 func (g *Game) processShipMovement() {
     for se := g.Ships.Front(); se != nil; se = se.Next() {
@@ -346,9 +374,10 @@ func (g *Game) doSetupForDevelopment() {
     g.PlayerShip.DesignName = "militia corvette"
     g.PlayerShip.HitSize = 1.3
     g.PlayerShip.HitPoints = 50.0
-    g.PlayerShip.Weapons.PushBack(New1KgGun("Main Cannon", 300, 60, 100))
-    g.PlayerShip.Weapons.PushBack(New1KgGun("Port Cannon", 180, 300, 25))
-    g.PlayerShip.Weapons.PushBack(New1KgGun("Strbd. Cannon", 60, 180, 25))
+    g.PlayerShip.Weapons.PushBack(New1KgGun("Main Cannon", 330, 30, 40))
+    g.PlayerShip.Weapons.PushBack(New1MwLaser("Fore Laser", 300, 60))
+    g.PlayerShip.Weapons.PushBack(New1MwLaser("Port Laser", 180, 300))
+    g.PlayerShip.Weapons.PushBack(New1MwLaser("Strbd. Laser", 60, 180))
     
     playerCrew := NewCrewMember("Victor", "Snapes", nil, CrewRoleCommander)
     playerCrew.IsPlayer = true

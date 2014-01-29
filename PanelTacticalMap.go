@@ -11,30 +11,34 @@ const (
     map_SHIPS = "»"
     map_PLANET = "○"
     map_PLANET_WITH_SHIPS = "%"
-    map_PLANETS = "8"    
+    map_PLANETS = "8"        
 )
 
 type spotType uint16
 const (
-    spot_EMPTY spotType = iota
+    spot_EMPTY spotType = iota    
     spot_TRAIL // displays like spot_EMPTY, except as a different color to indicate ship trails.
-    spot_PROJECTILE // displays a flying projectile
+    spot_LASER // displays a laser (gets overwritten by projectiles)
+    spot_PROJECTILE // displays a flying projectile    
     spot_SHIP
     spot_SHIPS
     spot_PLANET
     spot_PLANET_WITH_SHIPS
     spot_PLANETS    
+    
 )
 
 type spot struct {
     spotType spotType
     // When this is just a single ship
-    ship *Ship    
+    ship *Ship 
+    laser *Projectile // if this ends up being a laser map spot, this is used to look up the angle to display
+    
     // When this is just a single planet?    
     
     // This indicates that whatever in this spot was hit by weapons fire
     // last turn, and should be appropriately displayed.
-    wasHit bool
+    wasHit bool    
 }
 
 func (p *PanelTacticalMap) ProcessInput(g *Game, ch rune, key termbox.Key) *InputResult {
@@ -98,16 +102,33 @@ func createBlankGrid(r *ConsoleRange) [][]spot {
     return grid
 }
 
+// Loops over all the objects on the map, figured out which cell in the visible grid they should be in
 func (g *Game) fillGridWithInformation(r *ConsoleRange, grid [][]spot) {
     w, h  := r.GetSize()        
     var centerX int = (w - 2) / 2
     var centerY int = (h - 2) / 2
     
-    // Figure out what each dot should show      
-    // Fill the in the Player's ship as the center
-    //grid[centerY][centerX] = spot_SHIP
-    
     // Loop over every relevant object to display and figure out which dot it should be in.    
+    for e := g.LaserProjectiles.Front(); e != nil; e = e.Next() {
+        //p := e.Value.(*Projectile)
+        
+        // figure out where the start and end points lie. 
+        // Use those to loop from the beginning of the line to the end, adding any points that
+        // SHOULD be displayed into the mapSpot.
+        // I just need to figure out what the algorithm is for doing that aliasing.
+        // https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+        
+        
+        // Alright, the algorithm is WORKING (albeit probably not for vertical lines)
+        // So what I do is find out what points the laser started and ended. Then I just use
+        // the line algorithm to find all the middle points. Last, any that are actuall visible 
+        // get displayed to a string
+        
+        
+        
+        
+        
+    }
     for e := g.Projectiles.Front(); e != nil; e = e.Next() {
         p := e.Value.(*Projectile)
         rX, rY := determineRelativeMapSpot(g.PlayerShip.Point, p.Point, g.ThePlayer.TacticalMapScale)
@@ -143,11 +164,8 @@ func (g *Game) fillGridWithInformation(r *ConsoleRange, grid [][]spot) {
             grid[absoluteY][absoluteX].wasHit = grid[absoluteY][absoluteX].wasHit || s.WasHit
         }
         
-        // ---- go through the past locations of the ship and set those to any grid cells as available.
-        //locationCount := 0
         for pp := s.PastLocations.Front(); pp != nil; pp = pp.Next() {
             point := pp.Value.(Point)
-            // ---- also still need to write the code for the movement to SAVE past locations
             relativeX, relativeY := determineRelativeMapSpot(g.PlayerShip.Point, point, g.ThePlayer.TacticalMapScale)
             
             absoluteX := centerX + relativeX

@@ -154,3 +154,69 @@ func GetShortestTurn(currentAngle, targetAngle float64) (float64, bool) {
         return counterAngle, false
     }    
 }
+
+type LinePoint struct { X, Y int }
+func BresenhamLine(x0, y0, x1, y1 int) []LinePoint {
+    points := make([]LinePoint, 0, 100)
+    
+    deltaX := x1 - x0
+    deltaY := y1 - y0
+    error := 0.0
+    deltaError := math.Abs(float64(deltaY) / float64(deltaX)) 
+    
+    y := y0
+    for x := x0; x <= x1; x++ {
+        points = append(points, LinePoint{ X: x, Y: y})  
+        error += deltaError
+        
+        if (error >= 0.5) {
+            y ++
+            error -= 1.0
+        }
+    }
+    
+    return points
+}
+func BresenhamLine2(x0, y0, x1, y1 int) []LinePoint {
+    points := make([]LinePoint, 0, 100)
+    
+    isSteep := intAbs(y1 - y0) > intAbs(x1 - x0)
+    if isSteep {
+        x0, y0 = y0, x0
+        x1, y1 = y1, x1
+    }
+    if x0 > x1 {
+        x0, x1 = x1, x0
+        y0, y1 = y1, y0
+    }
+    deltaX := x1 - x0
+    deltaY := intAbs(y1 - y0)
+    error := deltaX / 2
+    
+    yStep := -1
+    if (y0 < y1) { yStep = 1 }    
+    
+    y := y0
+    for x := x0; x <= x1; x++ {
+        if (isSteep) {
+            points = append(points, LinePoint{ X: y, Y: x})  
+        } else {
+            points = append(points, LinePoint{ X: x, Y: y})  
+        }    
+        
+        error -= deltaY
+        if (error < 0) {
+            y += yStep
+            error += deltaX
+        }
+    }
+    
+    return points
+}
+
+func intAbs(value int) int {
+    if (value < 0) { return value * -1 }
+    return value
+}
+
+

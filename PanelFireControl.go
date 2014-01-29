@@ -226,17 +226,21 @@ func (p *PanelFireControl) displayNormal(g *Game, r *ConsoleRange) {
     w := g.ThePlayer.FireControlSelectedWeapon
     r.DisplayText(w.DesignName, 19, 2)
     
-    ammoFg := red
-    ammoBg := black
-    if (w.Ammunition == 0) {
-        ammoFg = black
-        ammoBg = brightGrey
-    } else if (w.Ammunition <= 10) {
-        ammoFg = black
-        ammoBg = brightRed
+    if (w.WeaponType == WeaponTypeGun) {
+        ammoFg := red
+        ammoBg := black
+        if (w.Ammunition == 0) {
+            ammoFg = black
+            ammoBg = brightGrey
+        } else if (w.Ammunition <= 10) {
+            ammoFg = black
+            ammoBg = brightRed
+        }    
+        r.DisplayTextWithColor(fmt.Sprintf("  Ammo (%6d)  ", w.Ammunition), 19,3, ammoFg, ammoBg)
+    } else if (w.WeaponType == WeaponTypeLaser) {
+        r.DisplayText(fmt.Sprintf("MAX RANGE (%5.f)", w.DesignDistance), 19, 3)
     }
     
-    r.DisplayTextWithColor(fmt.Sprintf("  Ammo (%5d)  ", w.Ammunition), 20,3, ammoFg, ammoBg)
     r.Com("[s]"," Auto Fire",19,4,black, green)
     if (w.AutoFire) {
         r.DisplayTextWithColor(" ON ", 33,4, black, white)
@@ -276,7 +280,7 @@ func (p *PanelFireControl) writeNameWithReload(g *Game, r *ConsoleRange, w *Ship
     darkGrey := termbox.ColorBlack | termbox.AttrBold
 
     fg := termbox.ColorRed
-    if (w.Ammunition == 0) {
+    if (w.Ammunition == 0 && w.WeaponType == WeaponTypeGun) {
         fg = termbox.ColorWhite
     } else if (w.AutoFire) {
         fg = termbox.ColorRed | termbox.AttrBold
