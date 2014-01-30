@@ -101,6 +101,7 @@ func (g *Game) processAiCharacters() {
     // go through each ship's crewmembers. 
     for se := g.Ships.Front(); se != nil; se = se.Next() {
         s := se.Value.(*Ship)        
+        if s.IsDestroyed() { continue }
         
         // Go through each crew member and process their turn
         for ce := s.CrewMembers.Front(); ce != nil; ce = ce.Next() {
@@ -132,7 +133,8 @@ func (g *Game) processWeapons() {
     
     // Loop over each ship and each weapon, creating fired lasers and projectiles as appropriate
     for se := g.Ships.Front(); se != nil; se = se.Next() {
-        s := se.Value.(*Ship)
+        s := se.Value.(*Ship)        
+        if s.IsDestroyed() { continue }
         
         for we := s.Weapons.Front(); we != nil; we = we.Next() {
             w := we.Value.(*ShipWeapon)
@@ -325,12 +327,13 @@ func (g *Game) processShipMovement() {
     for se := g.Ships.Front(); se != nil; se = se.Next() {
         s := se.Value.(*Ship)
 
-        // If the ship is destroyed, turn off all thrusters and everything else.
-        // However, the wreckage will keep moving until it drags to a halt
-        if (s.HitPoints <= 0.0) {
-            // ---- disable autopilot and all other controls.
+        // The ship does not try to change its momentum if it is destroyed
+        if (s.IsDestroyed() == false) {
+            s.DoThrust()
         }
         
+        // However, destroyed ships will keep on moving until the wreckage
+        // drags to a halt
         s.DoMovement()
     }   
 }

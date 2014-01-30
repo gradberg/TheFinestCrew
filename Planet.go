@@ -20,6 +20,7 @@ func (p *Planet) GetCourse() float64 { return 0.0 }
 func (p *Planet) GetSpeed() float64 { return 0.0 }
 func (p *Planet) GetHeading() float64 { return 0.0 } 
 func (p *Planet) GetName() string { return p.Name }
+func (p *Planet) IsDestroyed() bool { return false }
 
 
 

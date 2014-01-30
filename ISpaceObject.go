@@ -12,4 +12,5 @@ type ISpaceObject interface {
     GetSpeed() float64
     GetHeading() float64
     GetName() string
+    IsDestroyed() bool
 }

@@ -71,9 +71,11 @@ func (s *Ship) GetCourse() float64 { return s.MovementHeadingInDegrees } // The 
 func (s *Ship) GetSpeed() float64 { return s.SpeedInUnitsPerTick } // the speed of the ship going in that direction        
 func (s *Ship) GetHeading() float64 { return s.ShipHeadingInDegrees } // The direction that the ship is FACING (and thus thrust affects)
 func (s *Ship) GetName() string { return s.Name }
+func (s *Ship) IsDestroyed() bool {
+    return s.HitPoints <= 0.0
+}
 
-// This actually moves the ship based on its current momentum
-func (s *Ship) DoMovement() {    
+func (s *Ship) DoThrust() {
     switch s.Helm.PilotIntent {
         case PilotIntentThrust: 
             s.thrust()
@@ -86,7 +88,10 @@ func (s *Ship) DoMovement() {
         case PilotIntentNone:        
             if s.Helm.AutoThrust { s.thrust() }    
     }
-    
+}
+
+// This actually moves the ship based on its current momentum
+func (s *Ship) DoMovement() {    
     // Handle speed decay
     decay := s.SpeedInUnitsPerTick * SpeedDecayMultiplier
     if (decay < MinimumSpeedDecay) { decay = MinimumSpeedDecay }

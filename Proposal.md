@@ -105,10 +105,13 @@ Custom Battles:
 
 ## Helmsman
 * Steers ship and plots courses
+// currently needs more to do. Albeit if the autopilot systems of the ship were damaged, the helmsman would be forced to manually control the thrusters and thus constantly be busy.
 
 ## Tactical Officer
 * Targets enemy ships, fires weapons, tries to improve hit chances
 * Reports upcoming threats to captain
+// If main computer is damaged, would be forced to do manual targeting of enemy ships, which is
+// time consuming and often incapable of handling all weapon systems of a large ship.
  
 ## Defense Officer
 * Manages shields, analyzes damage status and directs repair crews
@@ -124,6 +127,10 @@ Custom Battles:
 * Increases power output
 * Increases speed output?
 * Handles power recharhing/reloading
+
+## Security Officer
+* Orders remote and local security forces to repel enemy boarding parties and attack with own?
+// Not sure I care for this. It doesn't synergize with the other roles, and there will too little ability to control security team. The exception being some ridiculous (albeit impressive) overhead map of the local and enemy ships and their teams. That might be cool.
 
 #
 #

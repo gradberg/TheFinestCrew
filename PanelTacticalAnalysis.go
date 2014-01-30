@@ -82,14 +82,14 @@ func (p *PanelTacticalAnalysis) Display(g *Game, r *ConsoleRange) {
         
         // ---- color based on friend or foe
         r.DisplayTextWithColor(tas.Name, w - nameLength - 1, 1, termbox.ColorRed | termbox.AttrBold, termbox.ColorBlack | termbox.AttrBold)
-        
+          
         r.DisplayText("DIST", 18, 3)
         r.DisplayText(fmt.Sprintf("%5.f", distance), 17, 4) 
         
         bearing := AddAngles(-ps.ShipHeadingInDegrees, modifierAngleInDegrees)
         r.DisplayText("BEAR.", 17, 7)
         r.DisplayText(fmt.Sprintf("%05.1f", bearing), 17, 6)
-
+        
         compassX, compassY = w - 14, 5
         r.DisplayTextWithColor("     ", compassX - 2, compassY - 2, termbox.ColorRed, termbox.ColorBlack | termbox.AttrBold)
         r.DisplayTextWithColor("     ", compassX - 2, compassY - 1, termbox.ColorRed, termbox.ColorBlack | termbox.AttrBold)
@@ -97,25 +97,37 @@ func (p *PanelTacticalAnalysis) Display(g *Game, r *ConsoleRange) {
         r.DisplayTextWithColor("     ", compassX - 2, compassY + 1, termbox.ColorRed, termbox.ColorBlack | termbox.AttrBold)
         r.DisplayTextWithColor("     ", compassX - 2, compassY + 2, termbox.ColorRed, termbox.ColorBlack | termbox.AttrBold)
   
+        dx := w - 8
+        isDestroyed := tas.IsDestroyed()      
+        if isDestroyed {
+            r.DisplayText("**DESTROYED**", 25, 2)
+            r.DisplayTextWithColor(map_DESTROYED_SHIP, compassX, compassY, termbox.ColorRed, termbox.ColorBlack | termbox.AttrBold)            
+            
+        } else {
+            modifiedHeading := AddAngles(AddAngles(tas.ShipHeadingInDegrees, -modifierAngleInDegrees),90.0)
+            shipHeadingIcon := Compass_GetShipHeadingIcon(modifiedHeading)
+            r.DisplayTextWithColor(shipHeadingIcon, compassX, compassY, termbox.ColorRed, termbox.ColorBlack | termbox.AttrBold)
+            
+            icon, x, y := Compass_GetNearDirectionArrow(modifiedHeading)
+            r.DisplayTextWithColor(icon, compassX + x, compassY + y, termbox.ColorRed, termbox.ColorBlack | termbox.AttrBold)
+
+                        
+            r.DisplayText(fmt.Sprintf("%5.1f :HP", tas.HitPoints), dx - 2, 3)
+            r.DisplayText(fmt.Sprintf("%03.f :RH", modifiedHeading), dx, 7)
+        }
+
+            
+            modifiedCourse := AddAngles(AddAngles(tas.MovementHeadingInDegrees, -modifierAngleInDegrees), 90.0)
+            icon, x, y = Compass_GetFarDirectionArrow(modifiedCourse)
+            r.DisplayTextWithColor(icon, compassX + x, compassY + y, termbox.ColorBlack | termbox.AttrBold, termbox.ColorRed)
+        
+        // display regardless of being destroyed, as the hulk can drift
+        r.DisplayTextWithColor(fmt.Sprintf("%03.f :RC", modifiedCourse), dx, 8, termbox.ColorBlack | termbox.AttrBold, termbox.ColorRed)
+        r.DisplayTextWithColor(fmt.Sprintf("%6.1f :S", tas.SpeedInUnitsPerTick), dx - 2, 9, termbox.ColorBlack | termbox.AttrBold, termbox.ColorRed)
+        
         
     
         
-        modifiedHeading := AddAngles(AddAngles(tas.ShipHeadingInDegrees, -modifierAngleInDegrees),90.0)
-        shipHeadingIcon := Compass_GetShipHeadingIcon(modifiedHeading)
-        r.DisplayTextWithColor(shipHeadingIcon, compassX, compassY, termbox.ColorRed, termbox.ColorBlack | termbox.AttrBold)
-        
-        icon, x, y := Compass_GetNearDirectionArrow(modifiedHeading)
-        r.DisplayTextWithColor(icon, compassX + x, compassY + y, termbox.ColorRed, termbox.ColorBlack | termbox.AttrBold)
-        
-        modifiedCourse := AddAngles(AddAngles(tas.MovementHeadingInDegrees, -modifierAngleInDegrees), 90.0)
-        icon, x, y = Compass_GetFarDirectionArrow(modifiedCourse)
-        r.DisplayTextWithColor(icon, compassX + x, compassY + y, termbox.ColorBlack | termbox.AttrBold, termbox.ColorRed)
-        
-        dx := w - 8
-        r.DisplayText(fmt.Sprintf("%5.1f :HP", tas.HitPoints), dx - 2, 3)
-        r.DisplayText(fmt.Sprintf("%03.f :RH", modifiedHeading), dx, 7)
-        r.DisplayTextWithColor(fmt.Sprintf("%03.f :RC", modifiedCourse), dx, 8, termbox.ColorBlack | termbox.AttrBold, termbox.ColorRed)
-        r.DisplayTextWithColor(fmt.Sprintf("%6.1f :S", tas.SpeedInUnitsPerTick), dx - 2, 9, termbox.ColorBlack | termbox.AttrBold, termbox.ColorRed)
         
     }
 }

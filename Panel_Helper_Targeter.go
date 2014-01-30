@@ -83,8 +83,11 @@ func (t *Targeter) Display(
         target := t.DesiredTarget                
         r.DisplayText(target.GetName(), 4, 6)
         
-        _, distance := t.g.PlayerShip.Point.Subtract(target.GetPoint()).ToVector()
+        _, distance := t.g.PlayerShip.Point.Subtract(target.GetPoint()).ToVector()        
         r.DisplayText(fmt.Sprintf("Distance %7.1f", distance), 4, 7)
+        if target.IsDestroyed() {
+            r.DisplayText("**DESTROYED**", 4, 8)
+        }
     }
 }
 

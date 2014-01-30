@@ -12,6 +12,7 @@ const (
     map_PLANET = "○"
     map_PLANET_WITH_SHIPS = "%"
     map_PLANETS = "8"        
+    map_DESTROYED_SHIP = "@"
 )
 
 type spotType uint16
@@ -247,6 +248,7 @@ func displayGrid(r *ConsoleRange, grid [][]spot) {
             var spot string = "?"
             isTrail := false       
             isLaser := false
+            isDestroyed := false
             switch grid[rowIndex][colIndex].spotType {
                 case spot_EMPTY: spot=map_BLANK                
                 case spot_TRAIL:
@@ -259,7 +261,14 @@ func displayGrid(r *ConsoleRange, grid [][]spot) {
                     spot=map_PROJECTILE
                     isTrail = true
                 case spot_SHIP: 
-                    spot = Compass_GetShipHeadingIcon(grid[rowIndex][colIndex].ship.ShipHeadingInDegrees)
+                    isDestroyed = grid[rowIndex][colIndex].ship.IsDestroyed()
+                    
+                    if (isDestroyed) {
+                        spot = map_DESTROYED_SHIP
+                    } else {
+                        spot = Compass_GetShipHeadingIcon(grid[rowIndex][colIndex].ship.ShipHeadingInDegrees)
+                    }                    
+                    
                 case spot_SHIPS: spot=map_SHIPS 
                 case spot_PLANET: spot=map_PLANET       
                 case spot_PLANET_WITH_SHIPS: spot=map_PLANET_WITH_SHIPS             
@@ -275,6 +284,8 @@ func displayGrid(r *ConsoleRange, grid [][]spot) {
             bg := termbox.ColorBlack
             if (grid[rowIndex][colIndex].wasHit) { 
                 bg = termbox.ColorYellow | termbox.AttrBold
+            } else if isDestroyed {
+                bg = termbox.ColorBlack | termbox.AttrBold
             }
             
             fg := termbox.ColorRed

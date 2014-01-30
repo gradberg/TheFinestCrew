@@ -293,7 +293,7 @@ func (ai *AiHelmsmanBasic) computeEvasiveHeading(s *Ship, g *Game, cm *CrewMembe
         
         for e := g.Ships.Front(); e != nil; e = e.Next() {
             ss := e.Value.(*Ship)
-            if (ss == s || ss.HitPoints <= 0.0) { continue }
+            if (ss == s || ss.IsDestroyed()) { continue }
                         
             // Take the cosine of the angle difference (which is what vector dot products use)
             // If that value is negative, it means the ship is on the other side and doesn't count.

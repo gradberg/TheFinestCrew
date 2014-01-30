@@ -118,29 +118,29 @@
     @@@@ Tactical Map should display projectiles    
     @@@@ need logging to file to record combat stats and make dev easier
 
+@@ Destroyed ship
+  @@@ Less than zero: Show as destroyed
+  @@@ destroyed ships should be shown, and potentially impacted? (Yes.)  
+  @@@ Ships should be ignored when destroyed?
+  @@@ Ships should continue moving and drag to a stop after being destroyed
+
   
 #
 #
 # TODO #  
 
--- Destroyed ship
-  --- Less than zero: Show as destroyed
-  --- destroyed ships should be shown, and potentially impacted? (Yes.)  
-  --- Ships should be ignored when destroyed?
-  --- Ships should continue moving and drag to a stop after being destroyed
-
 -- Less Naive combat
   --- Pirate ships chase player when near (need new pirate pilot ai)
   --- Pirate ships shoot at player
-
--- Commander AI and Player Helmsman
-  --- Personnel panel for helmsman to receive those orders
-  --- If you play the helmsman, and you don't do what the commander says... what happens?
   
 -- Game Lifecycle
   --- Intro screen to choose your crewmember and ship
   --- Death screen
 
+-- Commander AI and Player Helmsman
+  --- Personnel panel for helmsman to receive those orders
+  --- If you play the helmsman, and you don't do what the commander says... what happens?
+  
 -- RogueBasin?
 -- Temple of the Roguelike?
   
@@ -151,10 +151,7 @@
   --- Guns that fire multiple projectiles (so that big ships trying to counter little fighters can have shotgun-like guns systems with many projectiles fired per shot and bad precision so that they fan out)
   --- FireControl should have a full-screen view showing one picture of the ship in the middle, and all of the turrets arranged around it. It'd be a cool view
   --- Fire At Will mode - Fire at will can work well for very large ships with many gun batteries pointing various directions, and you may want to set the small guns to auto-fire on whatever is in range. 
-         
-    
-  
-  
+           
 -- Personnel
   --- Full screen panel
   
@@ -177,7 +174,7 @@
       (Which becomes fun when you are in charge of a fleet, you order the whole fleet to strafe a target, you order
        your helmsman to do so, and they order theirs to do so.)
   
-  
+
 #
 #
 # PLAYABLE VERSION REQUIREMENTS #
@@ -195,10 +192,11 @@ On game startup, the player could choose which ship type they want (a fighter to
 #
 # OTHER #
 -- How will keyboard inputs compose nicely across all of the different panels. Specifically, as I implement more and more panels, it means that if they were combined in unexpected ways, it would be a problem if they ever shared keys.
--- Fix RealTime toggle (Enter) incorrectly being active on full-screens
+@@ Fix RealTime toggle (Enter) incorrectly being active on full-screens
 -- The player should be considered just another crew member with their decisions made using a IAiCrew module (which prompts the UI?)
 -- Add in ship logs, which is every action by every crew member (and every random event) should be rcorded for future playback?
 -- Need a more sophisticated list/iterator system, as parsing the lists themselves (and finding the next item after the existing item, which requires finding the list element) is quite tedious
 -- Need some sort of logging so if a crash occurs, I can get a crash dump to fix it
 -- Convert all headings and speeds into vectors?
 -- multi-tick actions should let the game display the screen changes just like if you had realtime turned on, except you cannot stop it or pause it until those ticks are finished.
+-- Reorganize codebase, if possible, into some sub-packages (CompassUtilities would probably extract nicely)
