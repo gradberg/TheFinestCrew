@@ -109,9 +109,9 @@ func (r *ConsoleRange) SetBorder() {
 func (r *ConsoleRange) SetTitle(title string) {
     // The title takes up a specific amount of space in the range
     maxLength := r.x2 - r.x1 - 3
-    title = TrimLength(title, maxLength)
+    runes := TrimLength([]rune(title), maxLength)
     
-    r.writeText(title, r.x1 + 2, r.y1, r.fg | termbox.AttrBold, r.bg)
+    r.writeText(runes, r.x1 + 2, r.y1, r.fg | termbox.AttrBold, r.bg)
 }
 
 // Displays text, truncated (not wrapped) using the default colors
@@ -124,15 +124,18 @@ func (r *ConsoleRange) DisplayVerticalText(text string, x int, y int) {
 }
 
 func (r *ConsoleRange) DisplayTextWithColor(text string, x int, y int, fg termbox.Attribute, bg termbox.Attribute) {
+    r.DisplayRunesWithColor([]rune(text),x,y,fg,bg)
+}
+
+func (r *ConsoleRange) DisplayRunesWithColor(text []rune, x int, y int, fg termbox.Attribute, bg termbox.Attribute) {
     // if this is outside of the Y bounds, just don't display anything
     if y < 0 || y > r.y2 - r.y1 {
         return
     }
     
     maxLength := r.x2 - x + 1
-    text = TrimLength(text, maxLength)
-    
-    r.writeText(text, r.x1 + x, r.y1 + y, fg, bg)
+    runes := TrimLength(text, maxLength)
+    r.writeText(runes, r.x1 + x, r.y1 + y, fg, bg)
 }
 
 func (r *ConsoleRange) DisplayVerticalTextWithColor(text string, x int, y int, fg termbox.Attribute, bg termbox.Attribute) {
@@ -142,21 +145,21 @@ func (r *ConsoleRange) DisplayVerticalTextWithColor(text string, x int, y int, f
     }
     
     maxLength := r.y2 - y + 1
-    text = TrimLength(text, maxLength)
-        
-    for i := 0; i < len(text); i++ {
-        r.writeText(text[i:i+1], r.x1 + x, r.y1 + y + i, fg, bg)
+    runes := TrimLength([]rune(text), maxLength)
+    
+    for i := 0; i < len(runes); i++ {
+        r.writeText(runes[i:i+1], r.x1 + x, r.y1 + y + i, fg, bg)
     }
 }
 
 // DisplayCommand (shortened to take less typing
 func (r *ConsoleRange) Com(hotkey string, description string, x int, y int, fg termbox.Attribute, bg termbox.Attribute) {
-    hotkeyLength := len(hotkey)
+    hotkeyLength := len([]rune(hotkey))
     r.DisplayTextWithColor(hotkey, x, y, fg, bg)
     r.DisplayText(description, x + hotkeyLength, y)
 }
 
-func (r *ConsoleRange) writeText(text string, x int, y int, fg termbox.Attribute, bg termbox.Attribute) {    
+func (r *ConsoleRange) writeText(text []rune, x int, y int, fg termbox.Attribute, bg termbox.Attribute) {    
     for index, runeValue := range text {
         termbox.SetCell(x + index, y, runeValue, fg, bg)
     }

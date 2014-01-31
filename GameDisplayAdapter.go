@@ -9,6 +9,8 @@ func (g *Game) Display() {
     Console_DrawStart()
     
     // Determine what to display
+    g.displayPanel(&PanelTitleScreen{})
+    
     g.displayPanel(&PanelPersonnel{})
     
     g.displayPanel(&PanelTacticalMap{})

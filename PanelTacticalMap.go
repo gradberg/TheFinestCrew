@@ -83,14 +83,14 @@ func (p *PanelTacticalMap) Display(g *Game, r *ConsoleRange) {
     r.DisplayText(fmt.Sprintf("Scale: %8.1f", g.ThePlayer.TacticalMapScale), 1, 1)
     r.DisplayTextWithColor("[q][w]", 1, 2, termbox.ColorRed, termbox.ColorGreen | termbox.AttrBold)       
     
-    r.DisplayText("Full [e]", w - 9, 1)
-    r.DisplayTextWithColor("[e]", w - 4, 1, termbox.ColorRed, termbox.ColorGreen | termbox.AttrBold)
+    r.DisplayText("Full [e]", w - 9, 0)
+    r.DisplayTextWithColor("[e]", w - 4, 0, termbox.ColorRed, termbox.ColorGreen | termbox.AttrBold)
     
     
     
     // Location
-    r.DisplayText(fmt.Sprintf("X %10.1f", g.PlayerShip.Point.X()), 2 ,h -2)
-    r.DisplayText(fmt.Sprintf("Y %10.1f", g.PlayerShip.Point.Y()), w - 14  ,h-2)
+    r.DisplayText(fmt.Sprintf("X %10.1f", g.PlayerShip.Point.X()), 2 ,h -1)
+    r.DisplayText(fmt.Sprintf("Y %10.1f", g.PlayerShip.Point.Y()), w - 14  ,h-1)
 }
 
 func createBlankGrid(r *ConsoleRange) [][]spot {

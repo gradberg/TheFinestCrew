@@ -35,17 +35,22 @@ func (g *Game) DoInput() *InputResult {
     var result *InputResult
     
     // Should go first, to catch any "Stop real time" button presses.
-    result = g.processInputForPanel(result, air.Ch, air.Key, &PanelOverlay{})
+    result = g.processInputForPanel(result, air.Ch, air.Key, &PanelTitleScreen{})
     
-    result = g.processInputForPanel(result, air.Ch, air.Key, &PanelPersonnel{})
-    
-    result = g.processInputForPanel(result, air.Ch, air.Key, &PanelTacticalMap{})
-    result = g.processInputForPanel(result, air.Ch, air.Key, &PanelTacticalAnalysis{})
-    result = g.processInputForPanel(result, air.Ch, air.Key, &PanelFireControl{})
-    
-    result = g.processInputForPanel(result, air.Ch, air.Key, &PanelHelmStatus{})
-    result = g.processInputForPanel(result, air.Ch, air.Key, &PanelHelmControl{})
-    
+    // Do not process the normal game panels unless the game is actually being played.
+    // Just to avoid any weird behavior (especially with the real-time controls)
+    if (g.GameStatus == GameStatusPlaying) {
+        result = g.processInputForPanel(result, air.Ch, air.Key, &PanelOverlay{})
+        
+        result = g.processInputForPanel(result, air.Ch, air.Key, &PanelPersonnel{})
+        
+        result = g.processInputForPanel(result, air.Ch, air.Key, &PanelTacticalMap{})
+        result = g.processInputForPanel(result, air.Ch, air.Key, &PanelTacticalAnalysis{})
+        result = g.processInputForPanel(result, air.Ch, air.Key, &PanelFireControl{})
+        
+        result = g.processInputForPanel(result, air.Ch, air.Key, &PanelHelmStatus{})
+        result = g.processInputForPanel(result, air.Ch, air.Key, &PanelHelmControl{})    
+    }
         
     if result == nil {    
         // Read normal keys, then try keycodes    

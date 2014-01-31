@@ -23,6 +23,16 @@ type DisplayResult struct {
 func (g *Game) DeterminePanelArrangement(panel interface{}) *DisplayResult {
     // ---- use individual panel bool flags for each panel to indicate that they are full-screen... stored on the Player?
     
+    // First see if this is not in the playing-state, and display different
+    // screens as a result.
+    switch g.GameStatus {
+        case GameStatusTitleScreen:
+            return overlayIfPanel(panel, &PanelTitleScreen{})
+        case GameStatusDeathScreen:
+    }
+    
+    
+    
     switch panel.(type) {   
         case *PanelOverlay:
             return newDisplayResult(DISPLAY_OVERLAY, 0, 0)
@@ -96,6 +106,15 @@ func fullScreenIfPanel(testPanel interface{}, targetPanel interface{}) *DisplayR
     same := reflect.TypeOf(testPanel) == reflect.TypeOf(targetPanel)
     if same {
         return newDisplayResult(DISPLAY_FULL, 0, 0)
+    } else {
+        return newDisplayResult(DISPLAY_NONE, 0, 0)
+    }
+}
+
+func overlayIfPanel(testPanel interface{}, targetPanel interface{}) *DisplayResult {
+    same := reflect.TypeOf(testPanel) == reflect.TypeOf(targetPanel)
+    if same {
+        return newDisplayResult(DISPLAY_OVERLAY, 0, 0)
     } else {
         return newDisplayResult(DISPLAY_NONE, 0, 0)
     }

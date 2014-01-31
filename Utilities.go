@@ -4,11 +4,11 @@ import "math"
 import "strings"
 
 
-func TrimLength(s string, length int) string {
-    if len(s) > length {
-        return s[0:length]
+func TrimLength(runes []rune, length int) []rune {
+    if len(runes) > length {
+        return runes[0:length]
     } else {
-        return s
+        return runes
     } 
 }
 

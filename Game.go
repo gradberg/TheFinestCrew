@@ -11,8 +11,16 @@ import "container/list"
 import "math/rand"
 import "time"
 
+type GameStatusEnum int; const (
+    GameStatusTitleScreen GameStatusEnum = iota
+    GameStatusDeathScreen
+    GameStatusPlaying
+)
+
 // Represents the game being played. 
 type Game struct {
+    GameStatus GameStatusEnum
+
     tick int    
     
     ThePlayer *Player
@@ -57,9 +65,10 @@ func NewGame() *Game {
 func (g *Game) Run() {
     AsyncInput_Init()
     defer AsyncInput_Close()
-
+    
     // Development setup
-    g.doSetupForDevelopment()
+    //g.GameStatus = GameStatusPlaying
+    //g.doSetupForDevelopment()
 
     for {
         g.Display()
@@ -68,7 +77,11 @@ func (g *Game) Run() {
         var ir *InputResult = g.DoInput()
         if ir.Exit { return }
         
-        g.processTick(ir)
+        // This loop is used for the entire game lifecycle, so only
+        // process ticks if the game is actually being played.
+        if (g.GameStatus == GameStatusPlaying) {        
+            g.processTick(ir)
+        }
     }    
 }
 

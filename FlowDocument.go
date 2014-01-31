@@ -13,7 +13,7 @@ type FlowDocument struct {
     lines *list.List
 }
 type flowDocumentLine struct {
-    line string
+    line []rune
     fg, bg termbox.Attribute
 }
 func NewFlowDocument(width, height int) *FlowDocument {
@@ -25,13 +25,15 @@ func (f *FlowDocument) AddParagraph(paragraph string, fg, bg termbox.Attribute) 
 
     // loop until the entire string has been processed, or the flow document is full.
     
-    for f.lines.Len() < f.height && len(paragraph) > 0 {
-        workingLine := paragraph
+    paragraphRunes := []rune(paragraph)
+    
+    for f.lines.Len() < f.height && len(paragraphRunes) > 0 {
+        workingLine := paragraphRunes
         if len(workingLine) > f.width {
             workingLine = TrimLength(workingLine, f.width)
-            paragraph = paragraph[f.width:]//:len(paragraph) - f.width - 1]
+            paragraphRunes = paragraphRunes[f.width:]//:len(paragraph) - f.width - 1]
         } else {
-            paragraph = ""
+            paragraphRunes = []rune("")
         }
         
         f.lines.PushBack(&flowDocumentLine{line:workingLine, fg:fg, bg:bg})        
@@ -47,7 +49,7 @@ func (f *FlowDocument) Write(r *ConsoleRange, x, y int) {
     i := 0
     for e := f.lines.Front(); e != nil; e = e.Next() {
         line := e.Value.(*flowDocumentLine)
-        r.DisplayTextWithColor(line.line, x , y+i, line.fg, line.bg)
+        r.DisplayRunesWithColor(line.line, x , y+i, line.fg, line.bg)
         i++
     }
 }

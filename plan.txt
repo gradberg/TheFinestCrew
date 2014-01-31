@@ -142,9 +142,13 @@
   --- Personnel panel for helmsman to receive those orders
   --- If you play the helmsman, and you don't do what the commander says... what happens?
 
--- Revise Tactical Analysis. Its impossible to use.
+## Gameplay cleanup
   
+-- Revise Tactical Analysis Panel. Its impossible to use.  
+-- Add combat messages to Peronnel panel (your ship being hit. The enemy shit being hit.
 -- Fix Console/Terminal?
+
+## Deployment
   
 -- RogueBasin?
 -- Temple of the Roguelike?
