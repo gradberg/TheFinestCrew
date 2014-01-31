@@ -124,27 +124,57 @@
   @@@ Ships should be ignored when destroyed?
   @@@ Ships should continue moving and drag to a stop after being destroyed
 
-  
+@@ Less Naive combat
+  @@@ Add weapons to pirate ships
+  @@@ Have Pirate AI go through stages to set targets and such
+  @@@ Have Pirate AI follow player.
+
 #
 #
 # TODO #  
 
--- Less Naive combat
-  --- Pirate ships chase player when near (need new pirate pilot ai)
-  --- Pirate ships shoot at player
-  
 -- Game Lifecycle
   --- Intro screen to choose your crewmember and ship
-  --- Death screen
+  --- Death screen showing your kill count.
+  --- Rounds with ever increasing numbers of fighters
 
 -- Commander AI and Player Helmsman
   --- Personnel panel for helmsman to receive those orders
   --- If you play the helmsman, and you don't do what the commander says... what happens?
+
+-- Revise Tactical Analysis. Its impossible to use.
+  
+-- Fix Console/Terminal?
   
 -- RogueBasin?
 -- Temple of the Roguelike?
   
 // End of Playable Alpha 1  
+
+-- Cleanup
+  --- Move ship interaction to an interface so that players and AI's have the same (predefined) access. 
+    ---- With proper interfaces, the AI modules could be moved out to their own sub package, and can have a sort of business-logic layer for how many ticks a player or AI action costs (and when it ends)
+  --- Remove unused code files and classes
+  --- Restructure into sub-packages as possible
+  
+
+-- Defense Officer
+  --- Shield Control  
+    --- Shield Control panel
+    --- Display on Tactical Analysis
+    --- Incorporate into combat    
+    
+-- Ship Subsystems
+  --- Damage Control (used by Defense Officer)
+  --- AI's must manually control systems that get damaged
+  
+-- Personnel
+  --- Full screen panel
+  --- Display heard messages that don't apply to you (since the captain will be giving orders to two crew members now)
+  --- Display current crew members aboard ship
+  --- Somewhere have info on the ship you're all on. (maybe this would be on the personnel window)
+  
+// End of Playable Alpha 2
   
 -- Additional weapons/combat:
   --- Projectiles have precision (in that, when they fire, they have a 'cone' that they fire into)
@@ -152,14 +182,6 @@
   --- FireControl should have a full-screen view showing one picture of the ship in the middle, and all of the turrets arranged around it. It'd be a cool view
   --- Fire At Will mode - Fire at will can work well for very large ships with many gun batteries pointing various directions, and you may want to set the small guns to auto-fire on whatever is in range. 
            
--- Personnel
-  --- Full screen panel
-  
--- Shields
-  --- Shield Control panel
-  --- Display on Tactical Analysis
-  --- Incorporate into combat  
-  
 -- Friendly versus Foe ships
   --- Display differences in 
   
@@ -174,7 +196,17 @@
       (Which becomes fun when you are in charge of a fleet, you order the whole fleet to strafe a target, you order
        your helmsman to do so, and they order theirs to do so.)
   
-
+-- Captain Orders (and matching AI role logic)
+  --- Helmsman
+      (There is no point to a 'chase' command, as in staying behind a ship, because with psuedo newtonian physics, ships can just spin around and face any direction far easier than another ship can circle around them)
+    ---- Bring broadside to target (to fire away with guns that aim 50 forward and back)
+         Probably add tags to ships so that AI captains/commanders and query the design of the ship and use that to use relevant orders (since some ships will be forward-facing assault ships)
+    ---- Assault: Fire weapons from a certain distance
+    ---- Circle: Spin around a ship at a certain distance
+  
+    
+    
+  
 #
 #
 # PLAYABLE VERSION REQUIREMENTS #
@@ -187,6 +219,13 @@ Enemy ships will wander around until you are within range, and which point they 
 Combat: Ships consist only of hit points. Weapons would be projecticle/impact, which would bounce ships around.
 
 On game startup, the player could choose which ship type they want (a fighter to match up against other fighters) or the militia corvette. If the second choice, then they pick which crew member they want to be. The game keeps track of destroyed pirate fighters, and when the player is finally destroyed (which depending on skill, will be when there are just too many enemies firing at you simultaneously), you will be presented with a death screen showing how many kills you got.
+
+## Alpha 2
+Add some more depth, so adding another role (Defense Officer), who has the responsbility of directing repair teams, which means implementing ship subsystems, and also implementing shields. 
+
+With this role and those two game mechanics implemented, ships become much more fleshed-out and interesting.
+
+Probably have a new, bigger ship, like a Destroyer, which could have a main turret fore and aft, with lasers covering the rest of the area. It would be nice to then have some information display so that crew members could see more detailed information about the ship they are on. Similiarly, the Personnel panel needs something to view all of the crew members, their names and such, so the 'world' is more 'discoverable'.
 
 #
 #

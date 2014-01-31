@@ -48,6 +48,13 @@ Ships need to be composed of subsections, that way everything must be repaired i
 
 I think at least half of weapons should be kinetic impact, because that allows weapons to divert the direction that ships go. Perhaps all weapons hit shields first, but any physical ones, if impacting the hull, and really send it spinning and flying.
 
+# Weapons Types #
+* Projectiles - Standard cannon like a Tank or Naval ship would fire. Can travel decent distances over many ticks, but that means they are hard to hit moving targets at a distance. Upon impacting a target, that target's momentum changes due to the physical impact. Have finite ammunition so in certain scenarios must be used conservatively.
+* Lasers - Fire a maximum distance, which for balance reasons is shorter than the maximum range of a projectile. However, they are instantaneous, so if they are on target and within range, they hit. They have infinite ammunition (just use energy from the ship's power plant), but that is balanced by relatively weaker damage output than projectile weapons (and faster damage fall-off over distance). As they are pure energy and confer no momentum on impact, the ship's course is not affected when they hit.
+* Missiles - Guided projectile weapons with explosives. These would be very low ammunition weapons, but as they can fly themselves towards a target, they are capable of hitting targets at a long range. That of course means the defending ship needs a way to shoot them down? Like Projectiles they change the momentum of the ship upon impact and explosion.
+* Beams - Like Lasers, but are continous output for a certain number of ticks. Thus damage to a ship is measure by the percentage amount of a tick that they were impacting their target. Damage falloff again across range. These are not essential for variety, but just add nice flavoring to the available weapon types.
+
+
 # Missions #
 So similiar to how a traditional roguelike has dungeon levels, this has missions. You arrive on a map, have some objective to accomplish, and when you are done, you jump out. You can jump out at any time, but if you do, you (1) lose bonuses given to you after the mission, (2) risk losing the game by getting fired or demoted (THERE YOU GO, you get DEMOTED to where you cannot control the jump-out), and (3) lose any bonuses you may gain by fighting (by discovering new technologies, new weaponary, etc?)
 

@@ -207,7 +207,7 @@ func (p *PanelPersonnel) displayNormal(g *Game, r *ConsoleRange) {
     // key for displaying in full screen mode to scroll through all previous messages
     
     // don't display in full screen mode
-    r.Com("[1]", " Say Something", w- 18, 1, black, green)
+    r.Com("[1]", " Say Something", 2, 1, black, green)
     
     // ---- convert this to display many messages
     // ---- dim old messages

@@ -100,21 +100,23 @@ func (g *Game) processTick(ir *InputResult) {
 func (g *Game) processAiCharacters() {
     // go through each ship's crewmembers. 
     for se := g.Ships.Front(); se != nil; se = se.Next() {
-        s := se.Value.(*Ship)        
-        if s.IsDestroyed() { continue }
+        s := se.Value.(*Ship) 
         
-        // Go through each crew member and process their turn
-        for ce := s.CrewMembers.Front(); ce != nil; ce = ce.Next() {
-            c := ce.Value.(*CrewMember)
+        if (s.IsDestroyed() == false) {        
+            // Go through each crew member and process their turn
+            for ce := s.CrewMembers.Front(); ce != nil; ce = ce.Next() {
+                c := ce.Value.(*CrewMember)
+                
+                if (c.IsPlayer) { continue }
+                
+                // ---- use the ticks number to control how many turns this crew member loses?
+                c.Ai.DoAction(s,g,c)
+            }
             
-            if (c.IsPlayer) { continue }
-            
-            // ---- use the ticks number to control how many turns this crew member loses?
-            c.Ai.DoAction(s,g,c)
+            // do other per-ship tasks
+            s.Helm.DoAutoPilot()
         }
         
-        // do other per-ship tasks
-        s.Helm.DoAutoPilot()
         s.WasHit = false
     }   
     
@@ -433,7 +435,7 @@ func (g *Game) doSetupForDevelopment() {
     g.PlayerShip.Helm.IsDirectPilot = true
     g.PlayerShip.Name = "Centauri II"
     g.PlayerShip.DesignName = "militia corvette"
-    g.PlayerShip.HitSize = 1.3
+    g.PlayerShip.HitSize = 3.7
     g.PlayerShip.HitPoints = 50.0
     g.PlayerShip.Weapons.PushBack(New1KgGun("Main Cannon", 330, 30, 40))
     g.PlayerShip.Weapons.PushBack(New1MwLaser("Fore Laser", 300, 60))
@@ -502,11 +504,12 @@ func (g *Game) createRandomAiPirateFighter() *Ship {
     aiShip.MaxForwardThrust = 0.4
     aiShip.MaxBackwardThrust = 0.1
     aiShip.MaxRotation = 18 // manueverable little thing
-    aiShip.CrewMembers.PushBack(NewCrewMember("Unknown", "Scoundrel", &AiHelmsmanTest{}, CrewRolePilot))
-    aiShip.HitSize = 0.7
+    aiShip.CrewMembers.PushBack(NewCrewMember("Unknown", "Scoundrel", NewAiPiratePilot(g), CrewRolePilot))
+    aiShip.HitSize = 1.8
     aiShip.HitPoints = 10.0
     aiShip.Name = "Pirate Fighter"
     aiShip.DesignName = "unknown design"    
+    aiShip.Weapons.PushBack(New1MwLaser("Main Weapon", 300, 60))
     
     return aiShip
 }

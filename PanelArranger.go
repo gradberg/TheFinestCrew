@@ -66,12 +66,12 @@ func (g *Game) DeterminePanelArrangement(panel interface{}) *DisplayResult {
         case CrewRoleCommander:
             switch panel.(type) {  
                 case *PanelHelmControl:
-                    return newDisplayResult(DISPLAY_NORMAL, 1, 0)
+                    return newDisplayResult(DISPLAY_NONE, 1, 0)
                 case *PanelHelmStatus:
                     return newDisplayResult(DISPLAY_NONE, 1, 1)
                     
                 case *PanelPersonnel:
-                    return newDisplayResult(DISPLAY_NONE, 1, 0)
+                    return newDisplayResult(DISPLAY_NORMAL, 1, 0)
                     
                 case *PanelTacticalMap:
                     return newDisplayResult(DISPLAY_NORMAL, 0, 0)

@@ -82,8 +82,8 @@ func New1KgGun(emplacementName string, firingArcStart, firingArcEnd float64, amm
     
     w.WeaponType = WeaponTypeGun
     w.DesignName = "1 kg Gun"
-    w.DesignSpeed = 50.0
-    w.DesignDrag = 3.0
+    w.DesignSpeed = 90.0
+    w.DesignDrag = 5.0
     w.DesignDamage = 8.0     
     w.DesignCycle = 2
     
@@ -106,7 +106,7 @@ func New1MwLaser(emplacementName string, firingArcStart, firingArcEnd float64) *
     
     w.WeaponType = WeaponTypeLaser
     w.DesignName = "1 MW Laser"
-    w.DesignDistance = 180.0
+    w.DesignDistance = 220.0
     w.DesignDamage = 3.0     
     w.DesignCycle = 1
     
