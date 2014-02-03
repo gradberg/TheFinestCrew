@@ -23,8 +23,13 @@ type AiPiratePilot struct {
 }
 func NewAiPiratePilot(g *Game) *AiPiratePilot { 
     ai := &AiPiratePilot { } 
-    ai.alarmDistance = 100.0 + g.Rand.Float64() * 900.0
+    ai.alarmDistance = 100.0 + g.Rand.Float64() * 100.0
     return ai
+}
+
+func (ai *AiPiratePilot) ClearEphemeralState() {
+    ai.ticksUntilNextTurn = 0
+    ai.State = PiratePilotStateCalm
 }
 
 func (ai *AiPiratePilot) DoAction(s *Ship, g *Game, cm *CrewMember) int {
@@ -33,7 +38,7 @@ func (ai *AiPiratePilot) DoAction(s *Ship, g *Game, cm *CrewMember) int {
     switch ai.State {
         case PiratePilotStateCalm:
             return ai.doCalm(s,g,cm)
-        
+            
         case PiratePilotStateAlarmSetHelmTarget: 
             s.Helm.IsDirectPilot = false
             s.Helm.AutoPilotMode = AutoPilotModeTarget

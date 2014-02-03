@@ -13,14 +13,28 @@ import "time"
 
 type GameStatusEnum int; const (
     GameStatusTitleScreen GameStatusEnum = iota
+    GameStatusPickShip
+    GameStatusPickRole
+    GameStatusNamePlayer
+    GameStatusInstructions
+    
+    
     GameStatusDeathScreen
+    
     GameStatusPlaying
 )
 
 // Represents the game being played. 
 type Game struct {
     GameStatus GameStatusEnum
+    
+    round int // used to keep track of the round. Probably should be
+    // stored somewhere in the GameModeSurvival.go file. Needs a IGameMode interface?
+    // that way game modes can be modular and have a good way to save all of their
+    // relevant data throughout the mode?
 
+    GameSetup GameSetup
+    
     tick int    
     
     ThePlayer *Player
@@ -61,6 +75,30 @@ func NewGame() *Game {
     return g
 }
 
+// Removes items from all lists, but leaves the game mode and such intact
+// (Used for transitioning between rounds)
+func (g *Game) ClearEphemeralState() {
+    // ---- should all objects have their own 'ClearEphemeralState' method, so that
+    //      they can be responsible for it themselves?
+
+    for se := g.Ships.Front(); se != nil; se = se.Next() {
+        s := se.Value.(*Ship)
+        
+        for ce := s.CrewMembers.Front(); ce != nil; ce = ce.Next() {
+            c := ce.Value.(*CrewMember)
+            
+            c.ReceivedMessages.Init()            
+            if (c.Ai != nil) { c.Ai.ClearEphemeralState() }
+        }
+    }
+
+    g.Planets.Init()
+    g.Ships.Init()
+    g.PendingMessages.Init()
+    g.Projectiles.Init()
+    g.LaserProjectiles.Init()
+}
+
 // Blocking call which contains the main game loop, and exits when the user has chosen to quit.
 func (g *Game) Run() {
     AsyncInput_Init()
@@ -71,6 +109,14 @@ func (g *Game) Run() {
     //g.doSetupForDevelopment()
 
     for {
+        // ---- check for change in rounds?
+        //if (g.checkForLost())  { /* do what?? */ }
+        
+        if (g.checkForNextRound()) {
+            g.setupForNextRound()
+        }
+    
+    
         g.Display()
         
         g.message = ""
@@ -436,93 +482,4 @@ func (g *Game) EnqueueMessage(m *CrewMessage) {
         LogInfo("Enqueueing message from %s %s to %s %s.", m.From.FirstName, m.From.LastName, m.To.FirstName, m.To.LastName)
         g.PendingMessages.PushBack(m)
     }
-}
-
-
-func (g *Game) doSetupForDevelopment() {    
-    // First add the player's ship
-    g.PlayerShip = NewShip() 
-    g.PlayerShip.MaxForwardThrust = 1.0
-    g.PlayerShip.MaxBackwardThrust = 0.4
-    g.PlayerShip.MaxRotation = 18    
-    g.PlayerShip.Helm.IsDirectPilot = true
-    g.PlayerShip.Name = "Centauri II"
-    g.PlayerShip.DesignName = "militia corvette"
-    g.PlayerShip.HitSize = 3.7
-    g.PlayerShip.HitPoints = 50.0
-    g.PlayerShip.Weapons.PushBack(New1KgGun("Main Cannon", 330, 30, 40))
-    g.PlayerShip.Weapons.PushBack(New1MwLaser("Fore Laser", 300, 60))
-    g.PlayerShip.Weapons.PushBack(New1MwLaser("Port Laser", 180, 300))
-    g.PlayerShip.Weapons.PushBack(New1MwLaser("Strbd. Laser", 60, 180))
-    
-    playerCrew := NewCrewMember("Victor", "Snapes", nil, CrewRoleCommander)
-    playerCrew.IsPlayer = true
-    g.ThePlayer.CrewMember = playerCrew
-    g.ThePlayer.FireControlSelectedWeapon = g.PlayerShip.Weapons.Front().Value.(*ShipWeapon)
-    g.PlayerShip.CrewMembers.PushBack(playerCrew)        
-    
-    g.PlayerShip.CrewMembers.PushBack(NewCrewMember("Roy", "Higgards", &AiHelmsmanBasic{}, CrewRoleHelmsman))
-    
-    g.Ships.PushBack(g.PlayerShip)    
-    
-    g.Ships.PushBack(g.createRandomAiPirateFighter())
-    g.Ships.PushBack(g.createRandomAiPirateFighter())
-    
-   /*
-    // Add any remaining AI ships
-    aiShip := NewShip()
-    aiShip.Point = NewPoint(30, -10)
-    aiShip.ShipHeadingInDegrees = 90.0
-    aiShip.MaxForwardThrust = 0.4
-    aiShip.MaxBackwardThrust = 0.1
-    aiShip.MaxRotation = 18 // manueverable little thing
-    aiShip.CrewMembers.PushBack(&AiHelmsmanTest{})
-    aiShip.Name = "Jesse's Bounty"
-    aiShip.DesignName = "a pirate corvette"
-    g.Ships.PushBack(aiShip)
-   
-    aiShip = NewShip()
-    aiShip.Point = NewPoint(120, 50)
-    aiShip.ShipHeadingInDegrees = 90.0
-    aiShip.MaxForwardThrust = 0.4
-    aiShip.MaxBackwardThrust = 0.1
-    aiShip.MaxRotation = 18 // manueverable little thing
-    aiShip.CrewMembers.PushBack(&AiHelmsmanTest{})
-    aiShip.Name = "Carpe Diem"
-    aiShip.DesignName = "a pirate corvette"
-    g.Ships.PushBack(aiShip)
-     */
-    
-    
-    g.Planets.PushBack(&Planet {
-        Point: NewPoint(g.Rand.Float64() * 2000.0 - 1000.0, g.Rand.Float64() * 2000.0 - 1000.0).Round(),
-        Name: "Jupiter",
-    })
-    g.Planets.PushBack(&Planet {
-        Point: NewPoint(g.Rand.Float64() * 2000.0 - 1000.0, g.Rand.Float64() * 2000.0 - 1000.0).Round(),
-        Name: "Mars",
-    })    
-    g.Planets.PushBack(&Planet {    
-        Point: NewPoint(g.Rand.Float64() * 2000.0 - 1000.0, g.Rand.Float64() * 2000.0 - 1000.0).Round(),
-        Name: "Saturn",
-    })
-    
-}
-
-
-func (g *Game) createRandomAiPirateFighter() *Ship {
-    aiShip := NewShip()
-    aiShip.Point = NewPoint(g.Rand.Float64() * 800.0 - 400.0, g.Rand.Float64() * 800.0 - 400.0).Round()
-    aiShip.ShipHeadingInDegrees = 0.0
-    aiShip.MaxForwardThrust = 0.4
-    aiShip.MaxBackwardThrust = 0.1
-    aiShip.MaxRotation = 18 // manueverable little thing
-    aiShip.CrewMembers.PushBack(NewCrewMember("Unknown", "Scoundrel", NewAiPiratePilot(g), CrewRolePilot))
-    aiShip.HitSize = 1.8
-    aiShip.HitPoints = 10.0
-    aiShip.Name = "Pirate Fighter"
-    aiShip.DesignName = "unknown design"    
-    aiShip.Weapons.PushBack(New1MwLaser("Main Weapon", 300, 60))
-    
-    return aiShip
 }

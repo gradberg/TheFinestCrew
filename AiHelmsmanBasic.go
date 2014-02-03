@@ -27,6 +27,11 @@ type AiHelmsmanBasic struct {
     // the clutter in the main processing function
 }
 
+func (ai *AiHelmsmanBasic) ClearEphemeralState() {
+    ai.ticksUntilNextWait = 0
+    ai.standingOrders = nil    
+}
+
 func (ai *AiHelmsmanBasic) DoAction(s *Ship, g *Game, cm *CrewMember) int {
     if (ai.standingOrders == nil) {
         if (ai.ticksUntilNextWait <= 0) {

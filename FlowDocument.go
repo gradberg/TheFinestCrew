@@ -25,6 +25,7 @@ func (f *FlowDocument) AddParagraph(paragraph string, fg, bg termbox.Attribute) 
 
     // loop until the entire string has been processed, or the flow document is full.
     
+    
     paragraphRunes := []rune(paragraph)
     
     for f.lines.Len() < f.height && len(paragraphRunes) > 0 {

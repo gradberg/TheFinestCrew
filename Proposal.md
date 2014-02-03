@@ -52,6 +52,8 @@ I think at least half of weapons should be kinetic impact, because that allows w
 * Projectiles - Standard cannon like a Tank or Naval ship would fire. Can travel decent distances over many ticks, but that means they are hard to hit moving targets at a distance. Upon impacting a target, that target's momentum changes due to the physical impact. Have finite ammunition so in certain scenarios must be used conservatively.
 * Lasers - Fire a maximum distance, which for balance reasons is shorter than the maximum range of a projectile. However, they are instantaneous, so if they are on target and within range, they hit. They have infinite ammunition (just use energy from the ship's power plant), but that is balanced by relatively weaker damage output than projectile weapons (and faster damage fall-off over distance). As they are pure energy and confer no momentum on impact, the ship's course is not affected when they hit.
 * Missiles - Guided projectile weapons with explosives. These would be very low ammunition weapons, but as they can fly themselves towards a target, they are capable of hitting targets at a long range. That of course means the defending ship needs a way to shoot them down? Like Projectiles they change the momentum of the ship upon impact and explosion.
+The anti-missile batteries would probably be controlled by the defense officer? Or perhaps just use normal weapons via the tactical officer (which is why nearly all ships have low powered lasers with 360 degree coverage). However, if it is every possible to set up weapons or defenses to AUTOMATICALLY shoot down missiles, then it should do so for friendly or enemy missles. Thus crew members would need to coordinate lowering the defenses long enough to fire missiles without shooting them down yourself.
+
 * Beams - Like Lasers, but are continous output for a certain number of ticks. Thus damage to a ship is measure by the percentage amount of a tick that they were impacting their target. Damage falloff again across range. These are not essential for variety, but just add nice flavoring to the available weapon types.
 
 
@@ -66,11 +68,13 @@ Career Mode: You start as a lower-level crewmember and advance (helmsman -> comm
 
 >>> Career Mode needs a GOAL. Is there something you can acheive all the way at the end? What is it? Does it end with you as the admiral of a big fleet (in your flagship, of course), ordering fleet movements across a very large map, to conquer the enemy capital planet?
 
-Survival: 
+Survival: You are given a random ship and a random role on that ship (which doesn't change). The game is divided into rounds, each of which has an increasing number of enemy ships you must destroy to complete the round. At the end you receive a score based on how many enemies you defeated. 
 
-Preset Battles: 
+The reason Survival mode would be a random ship and crew is that I fear players would naturally gravitate towards always being the captain of a large ship. Thus they would miss out on playing the other roles and other ship types. By making it random, it (more or less. They could just keep restarting until they get the one they like?) forces them to play these various combinations, giving them the bad (communications officer on some rust bucket) as well as the good (Captain of a battleship)
 
-Custom Battles:
+Preset Battles: Predesigned battles with specific friendly and enemy ships. Perhaps you could pick which ship and role you got, or you would be randomly chosen which one.
+
+Custom Battles: Maybe the only mode where you can pick exactly which ship and role you use. You would pick which friendly and enemy ships exist and see who is the last one standing. There should be the possibility of more than two factions, so you woould try to stay out of fights while the enemy fleets beat each other to a pulp?
 
 # Command Panels #
 
@@ -158,6 +162,15 @@ Additionally, its possible that long-term each one of these systems could also h
 * Main Computer: While the ship is properply designed to be functional in the event of main computer failure, it does cause things like Auto Piloting, weapons locking, and any other sort of analytical functionality to be unavailable.
 * Communications Antenna: Ship loses the ability to send or receive communications from other ships
 * Power Generators: Like engines, ships have multiple generators which each feed power. As they are knocked-out, less power is available which much be focused on different subsystems.
+  Perhaps these should be more like Nuclear Reactors. There would be several sub systems design for portecting the Power Generators, each of which once knocked out means that future damage and destroy the reactor, cause catestrophic failure leading to a massive explosion on the ship (but this being something that wouldn't always happen, as the ship could just lose most sub systems and be rendered derelict)
 * Jump Drive: The ship may have a jump drive, giving it the ability to quickly travel a slightly random, far distance. Damamged, it is unavailable.
 
-
+#
+#
+# Ship Ideas #
+* "Federal" ships, whose portraits and weapon loadouts are roughly modeled after World War 2 era naval vessels, including modern missile cruisers
+* "Duson Cluster" ships, piloted by aliens who cannot handle powerful electro magnetic fields, and thus have very little laser technology
+* "Militia" ships, which are poorly armed, armored, and generally lack shields.
+* "Pirate" ships, which are generally even worse.
+* "Dirite Empire" ships, which rely primarily on laser technology versus cannosn
+* Broadside battleships and cruisers, which concentrate most of their significant firepower in one direction on the ship, leading to kill zones but vulnerabilities.

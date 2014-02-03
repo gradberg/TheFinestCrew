@@ -14,4 +14,9 @@ type IAiCrew interface {
     // takes up.
     DoAction(s *Ship, g *Game, cm *CrewMember) int
     
+    // Tells the AI to reset its internal variables relating to orders and round-relevant
+    // information. The AI CAN keep any memories it should have between rounds (reliability
+    // or trustworthyness of other AI characters or the player)
+    ClearEphemeralState()
+    
 }

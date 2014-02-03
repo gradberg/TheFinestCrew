@@ -19,11 +19,31 @@ type PanelPersonnel struct { }
 func (p *PanelPersonnel) ProcessInput(g *Game, ch rune, key termbox.Key) *InputResult {
     switch (g.ThePlayer.PersonnelStatus) {
         case PersonnelStatusNormal: return p.processInputNormal(g, ch, key)
-        default: return p.processInputSay(g, ch, key)
+        default:         
+            if (g.ThePlayer.CrewMember.CrewRole == CrewRoleHelmsman) {
+                return p.processInputHelmsmanSay(g, ch, key)
+            } else if (g.ThePlayer.CrewMember.CrewRole == CrewRoleCommander) {
+                return p.processInputCommanderSay(g, ch, key)
+            }  else {
+                return nil
+            }
     }
 }
 
-func (p *PanelPersonnel) processInputSay(g *Game, ch rune, key termbox.Key) *InputResult {
+func (p *PanelPersonnel) processInputHelmsmanSay(g *Game, ch rune, key termbox.Key) *InputResult {
+    result := &InputResult { Exit: false, TicksToPass: 0 }
+    
+    ps := g.ThePlayer.PersonnelStatus
+    switch ch {
+        case '1': ps = PersonnelStatusNormal
+        default: return nil
+    }
+    g.ThePlayer.PersonnelStatus = ps
+    
+    return result
+}
+
+func (p *PanelPersonnel) processInputCommanderSay(g *Game, ch rune, key termbox.Key) *InputResult {
     // Handle any special controls first
     if (g.ThePlayer.PersonnelStatus == PersonnelStatusSayHelmsmanDestination) {
         result := g.ThePlayer.PersonnelHelmsmanTarget.ProcessInput(g, ch, key)
@@ -145,7 +165,12 @@ func (p *PanelPersonnel) Display(g *Game, r *ConsoleRange) {
         
     switch (g.ThePlayer.PersonnelStatus) {
         case PersonnelStatusNormal: p.displayNormal(g,r)        
-        default: p.displaySay(g,r)
+        default:            
+            if (g.ThePlayer.CrewMember.CrewRole == CrewRoleHelmsman) {
+                p.displayHelmsmanSay(g,r)
+            } else if (g.ThePlayer.CrewMember.CrewRole == CrewRoleCommander) {
+                p.displayCommanderSay(g,r)
+            }        
     }
 }
 
@@ -153,7 +178,12 @@ const black = termbox.ColorBlack
 const green = termbox.ColorGreen | termbox.AttrBold
 const yellow = termbox.ColorYellow | termbox.AttrBold
 
-func (p *PanelPersonnel) displaySay(g *Game, r *ConsoleRange) {
+func (p *PanelPersonnel) displayHelmsmanSay(g *Game, r *ConsoleRange) {
+    r.Com("[1]", " Go Back", 1,2,black, green)
+    
+}
+
+func (p *PanelPersonnel) displayCommanderSay(g *Game, r *ConsoleRange) {
     r.Com("[1]", " Go Back", 1,2,black, green)
     
     // who else is there to send messages to?

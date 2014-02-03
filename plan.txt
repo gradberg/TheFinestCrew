@@ -131,13 +131,18 @@
 
 #
 #
-# TODO #  
-
+# TODO #
 -- Game Lifecycle
-  --- Intro screen to choose your crewmember and ship
-  --- Death screen showing your kill count.
+  @@@ Intro screen to choose your crewmember
+  @@@ Choose ship
+  --- Name character
+  @@@ Instruction Screen?  
   --- Rounds with ever increasing numbers of fighters
+  --- Intra-round screen  
+  --- Death screen showing your kill count.
 
+-- Tactical map needs better highlighting of ships
+  
 -- Commander AI and Player Helmsman
   --- Personnel panel for helmsman to receive those orders
   --- If you play the helmsman, and you don't do what the commander says... what happens?
@@ -145,7 +150,7 @@
 ## Gameplay cleanup
   
 -- Revise Tactical Analysis Panel. Its impossible to use.  
--- Add combat messages to Peronnel panel (your ship being hit. The enemy shit being hit.
+-- Add combat messages to Personnel panel (your ship being hit. The enemy shit being hit.
 -- Fix Console/Terminal?
 
 ## Deployment
@@ -160,7 +165,10 @@
     ---- With proper interfaces, the AI modules could be moved out to their own sub package, and can have a sort of business-logic layer for how many ticks a player or AI action costs (and when it ends)
   --- Remove unused code files and classes
   --- Restructure into sub-packages as possible
+    ---- Ship definitions
   
+-- Instructions
+  --- Weapon explanations?
 
 -- Defense Officer
   --- Shield Control  

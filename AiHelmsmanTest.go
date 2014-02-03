@@ -9,6 +9,10 @@ type AiHelmsmanTest struct {
     ticksUntilNextTurn int
 }
 
+func (ai *AiHelmsmanTest) ClearEphemeralState() {
+    ai.ticksUntilNextTurn = 0
+}
+
 func (ai *AiHelmsmanTest) DoAction(s *Ship, g *Game, cm *CrewMember) int {
     if (ai.ticksUntilNextTurn == 0) {
         // ---- pick a new heading

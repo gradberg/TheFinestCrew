@@ -25,13 +25,12 @@ func (g *Game) DeterminePanelArrangement(panel interface{}) *DisplayResult {
     
     // First see if this is not in the playing-state, and display different
     // screens as a result.
-    switch g.GameStatus {
-        case GameStatusTitleScreen:
-            return overlayIfPanel(panel, &PanelTitleScreen{})
-        case GameStatusDeathScreen:
+    
+    if (g.GameStatus == GameStatusDeathScreen) {
+        // ---- to do
+    } else if (g.GameStatus != GameStatusPlaying) {
+        return overlayIfPanel(panel, &PanelTitleScreen{})
     }
-    
-    
     
     switch panel.(type) {   
         case *PanelOverlay:
@@ -57,17 +56,14 @@ func (g *Game) DeterminePanelArrangement(panel interface{}) *DisplayResult {
                     return newDisplayResult(DISPLAY_NORMAL, 0, 1)
                     
                 case *PanelPersonnel:
-                    return newDisplayResult(DISPLAY_NONE, 1, 0)
+                    return newDisplayResult(DISPLAY_NORMAL, 1, 0)
                     
                 case *PanelTacticalMap:
                     return newDisplayResult(DISPLAY_NORMAL, 0, 0)
                 case *PanelTacticalAnalysis:
-                    return newDisplayResult(DISPLAY_NORMAL, 1, 0)
+                    return newDisplayResult(DISPLAY_NONE, 1, 0)
                 case *PanelFireControl:
                     return newDisplayResult(DISPLAY_NONE, 0, 0) 
-                    
-                //case *PanelOverlay:
-                    //return newDisplayResult(DISPLAY_OVERLAY, 0, 0)
                     
                 default:
                     return newDisplayResult(DISPLAY_NONE, 0, 0)
@@ -90,12 +86,31 @@ func (g *Game) DeterminePanelArrangement(panel interface{}) *DisplayResult {
                 case *PanelFireControl:
                     return newDisplayResult(DISPLAY_NORMAL, 1, 1) 
                     
-                //case *PanelOverlay:
-                    //return newDisplayResult(DISPLAY_OVERLAY, 0, 0)
+                default:
+                    return newDisplayResult(DISPLAY_NONE, 0, 0)
+            }
+            
+        case CrewRolePilot:
+            switch panel.(type) {  
+                case *PanelHelmControl:
+                    return newDisplayResult(DISPLAY_NORMAL, 1, 0)
+                case *PanelHelmStatus:
+                    return newDisplayResult(DISPLAY_NONE, 1, 1)
+                    
+                case *PanelPersonnel:
+                    return newDisplayResult(DISPLAY_NONE, 1, 0)
+                    
+                case *PanelTacticalMap:
+                    return newDisplayResult(DISPLAY_NORMAL, 0, 0)
+                case *PanelTacticalAnalysis:
+                    return newDisplayResult(DISPLAY_NORMAL, 0, 1)
+                case *PanelFireControl:
+                    return newDisplayResult(DISPLAY_NORMAL, 1, 1) 
                     
                 default:
                     return newDisplayResult(DISPLAY_NONE, 0, 0)
             }
+            
         
         default: panic("Player CrewRole undefined. Cannot run game.")
     }
