@@ -36,7 +36,9 @@ func (g *Game) DoInput() *InputResult {
     
     // Should go first, to catch any "Stop real time" button presses.
     result = g.processInputForPanel(result, air.Ch, air.Key, &PanelTitleScreen{})
-    
+    result = g.processInputForPanel(result, air.Ch, air.Key, &PanelDeathScreen{})
+    result = g.processInputForPanel(result, air.Ch, air.Key, &PanelNextRound{})
+        
     // Do not process the normal game panels unless the game is actually being played.
     // Just to avoid any weird behavior (especially with the real-time controls)
     if (g.GameStatus == GameStatusPlaying) {

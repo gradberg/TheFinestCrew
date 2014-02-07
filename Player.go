@@ -52,6 +52,29 @@ func NewPlayer(g *Game) *Player {
     }
 }
 
+func (p *Player) ClearEphemeralState(g *Game) {
+    p.TacticalMapScale = 100
+    
+    // Targeters must be cleared out so that they do not reference nonexistant ships.
+    p.HelmControlTarget = NewTargeter(g)
+    p.HelmControlSettingTarget = false
+    p.PersonnelHelmsmanTarget = NewTargeter(g)    
+    p.FireControlTarget = NewTargeter(g)
+    p.FireControlSettingTarget = false
+    
+    p.FireControlSettingAim = false
+    
+    // Course setters might as well be cleared out to present a clean slate
+    p.HelmControlCourseSetter = NewCourseSetter(g)
+    p.HelmControlSettingCourse = false
+    p.PersonnelHelmsmanCourseSetter = NewCourseSetter(g)
+    p.PersonnelStatus = PersonnelStatusNormal
+    p.TacticalAnalysisSelection = nil
+    
+    p.RunningRealTime = false
+    p.TacticalMapFullScreen = false
+}
+
 func (p *Player) DecreaseTacticalMapScale() {
     if p.TacticalMapScale >= 100000.0 { return }
     p.TacticalMapScale *= 2.0

@@ -18,8 +18,16 @@ type GameStatusEnum int; const (
     GameStatusNamePlayer
     GameStatusInstructions
     
+    // ---- long term, most of these statuses would be pulled in to a game mode
+    //      object which would manage all state related to game mode itself. That means
+    //      the interface would need a method for the GameDisplayAdapter and
+    //      GameInputAdapter to find out if various panels should be displayed based
+    //      on the mode state.
+    
     
     GameStatusDeathScreen
+    
+    GameStatusNextRound
     
     GameStatusPlaying
 )
@@ -28,10 +36,16 @@ type GameStatusEnum int; const (
 type Game struct {
     GameStatus GameStatusEnum
     
+    
+    // ---- these will be extracted out to a GameMode object in the future,
+    //      so that the map/universe can remain separate from the mechanics of
+    //      how different game modes progress
     round int // used to keep track of the round. Probably should be
     // stored somewhere in the GameModeSurvival.go file. Needs a IGameMode interface?
     // that way game modes can be modular and have a good way to save all of their
     // relevant data throughout the mode?
+    kills int // number of ships the player destroyed.
+    waitATurn bool // used to pause a single turn after the round is over before moving on.
 
     GameSetup GameSetup
     
@@ -80,16 +94,12 @@ func NewGame() *Game {
 func (g *Game) ClearEphemeralState() {
     // ---- should all objects have their own 'ClearEphemeralState' method, so that
     //      they can be responsible for it themselves?
+    
+    g.ThePlayer.ClearEphemeralState(g)
 
     for se := g.Ships.Front(); se != nil; se = se.Next() {
         s := se.Value.(*Ship)
-        
-        for ce := s.CrewMembers.Front(); ce != nil; ce = ce.Next() {
-            c := ce.Value.(*CrewMember)
-            
-            c.ReceivedMessages.Init()            
-            if (c.Ai != nil) { c.Ai.ClearEphemeralState() }
-        }
+        s.ClearEphemeralState()
     }
 
     g.Planets.Init()
@@ -110,12 +120,16 @@ func (g *Game) Run() {
 
     for {
         // ---- check for change in rounds?
-        //if (g.checkForLost())  { /* do what?? */ }
-        
-        if (g.checkForNextRound()) {
-            g.setupForNextRound()
+        if (g.GameStatus == GameStatusPlaying && g.checkForLost())  { 
+            g.GameStatus = GameStatusDeathScreen
         }
-    
+        
+        if (g.GameStatus == GameStatusPlaying) {
+            if (g.checkForNextRound()) {
+                //g.setupForNextRound()
+                g.GameStatus = GameStatusNextRound
+            }
+        }
     
         g.Display()
         

@@ -10,6 +10,8 @@ func (g *Game) Display() {
     
     // Determine what to display
     g.displayPanel(&PanelTitleScreen{})
+    g.displayPanel(&PanelDeathScreen{})
+    g.displayPanel(&PanelNextRound{})
     
     g.displayPanel(&PanelPersonnel{})
     

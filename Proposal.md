@@ -126,6 +126,9 @@ Custom Battles: Maybe the only mode where you can pick exactly which ship and ro
  
 ## Defense Officer
 * Manages shields, analyzes damage status and directs repair crews
+* Shields require energy to project them, and energy to charge their strength. If you turn shields OFF, then they charge their strength much faster, but obviously the ship is vulnerable.
+* Most AI's would leave the shields off until told, except if the ship starts getting damaged, they will turn on the shields unless the captain specifically orders them not to.
+  (This points towards some system where this AI exposes the concept of telling them NOT to raise ships, so they can store that order, but captain/commander AI's can choose whether or not to obey that sort of order)
 * Launches countermeasures and the like to confuse missiles
 
 ## Communications Officer

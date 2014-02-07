@@ -129,17 +129,20 @@
   @@@ Have Pirate AI go through stages to set targets and such
   @@@ Have Pirate AI follow player.
 
+@@ Game Lifecycle
+  @@@ Intro screen to choose your crewmember
+  @@@ Choose ship
+  !!! Name character
+  @@@ Instruction Screen?  
+  @@@ Rounds with ever increasing numbers of fighters
+  @@@ Rounds should end the turn AFTER you kill everything (that way you can see why it ended)
+  @@@ Intra-round screen  
+  @@@ Death screen showing your kill count.
+
+  
 #
 #
 # TODO #
--- Game Lifecycle
-  @@@ Intro screen to choose your crewmember
-  @@@ Choose ship
-  --- Name character
-  @@@ Instruction Screen?  
-  --- Rounds with ever increasing numbers of fighters
-  --- Intra-round screen  
-  --- Death screen showing your kill count.
 
 -- Tactical map needs better highlighting of ships
   
@@ -149,14 +152,19 @@
 
 ## Gameplay cleanup
   
+-- Have messages SENT from you show up in personnel panel. It adds flavor when you see the message and the response, and helps the player remember what they've told everyone to do.
+-- Fire Control: When target is selected, it should show if it is destroyed (as most ships are similiarly named)
 -- Revise Tactical Analysis Panel. Its impossible to use.  
 -- Add combat messages to Personnel panel (your ship being hit. The enemy shit being hit.
 -- Fix Console/Terminal?
 
 ## Deployment
   
+-- Icon for windows version?
 -- RogueBasin?
 -- Temple of the Roguelike?
+-- Linux Build?
+-- Mac build?
   
 // End of Playable Alpha 1  
 
@@ -166,6 +174,8 @@
   --- Remove unused code files and classes
   --- Restructure into sub-packages as possible
     ---- Ship definitions
+
+-- Player naming?
   
 -- Instructions
   --- Weapon explanations?

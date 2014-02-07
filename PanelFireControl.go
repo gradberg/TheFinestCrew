@@ -266,6 +266,9 @@ func (p *PanelFireControl) displayNormal(g *Game, r *ConsoleRange) {
     r.DisplayTextWithColor(ast, 33, 7, brightRed, black)
     if (w.TargetType == TargetTypeTarget && w.TargetShip != nil) { 
         r.DisplayText(w.TargetShip.GetName(), 20, 8)
+        if (w.TargetShip.IsDestroyed()) {
+            r.DisplayText("**DESTROYED**", 20, 9)
+        }
     }
    
 /*   

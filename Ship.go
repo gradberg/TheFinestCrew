@@ -40,7 +40,7 @@ type Ship struct {
     
     // Ship design information, like size, weapons, etc? 
     // Thrust, etc.
-    
+        
     DesignName string
     MaxForwardThrust float64 // how much the velocity can be changed each tick accelerating
     MaxBackwardThrust float64 // how much the velocity can be changed each tick deccelerating
@@ -63,6 +63,36 @@ func NewShip() *Ship {
     s.PastLocations = list.New()
     s.Weapons = list.New()
     return s
+}
+
+func (s *Ship) ClearEphemeralState() {
+    s.WasHit = false        
+    s.Helm.UsedForwardThrusters = false
+    s.Helm.UsedBackwardThrusters = false
+    s.Helm.UsedClockwiseThrusters = false
+    s.Helm.UsedCounterThrusters = false
+    
+    s.PastLocations.Init()
+    
+    // Reset to center, no movement, facing north. The game mode
+    // would responsible for anything else
+    s.Point = NewPoint(0.0,0.0)
+    s.MovementHeadingInDegrees = 0.0
+    s.ShipHeadingInDegrees = 0.0
+    s.SpeedInUnitsPerTick = 0.0
+    
+    
+    for ce := s.CrewMembers.Front(); ce != nil; ce = ce.Next() {
+        c := ce.Value.(*CrewMember)
+        
+        c.ReceivedMessages.Init()            
+        if (c.Ai != nil) { c.Ai.ClearEphemeralState() }
+    }
+    
+    for we := s.Weapons.Front(); we != nil; we = we.Next() {
+        w := we.Value.(*ShipWeapon)
+        w.ClearEphemeralState()
+    }
 }
 
 // Satisfy the ISpaceObject interface

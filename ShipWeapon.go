@@ -64,6 +64,18 @@ type ShipWeapon struct {
     // power usage?        
 }
 
+
+func (w *ShipWeapon) ClearEphemeralState() {
+    w.resetFiringAngle()
+    w.CurrentCycle = 0
+    w.AutoFire = false
+    w.TargetType = TargetTypeManual
+    
+    // Ammunition does not currently reset? Just like damage does not reset unless
+    // intentionally done so.
+    
+}
+
 // Set of common weapon definitions
 func New1KgGun(emplacementName string, firingArcStart, firingArcEnd float64, ammunition int) *ShipWeapon {
     w := &ShipWeapon { }
@@ -72,12 +84,7 @@ func New1KgGun(emplacementName string, firingArcStart, firingArcEnd float64, amm
     w.DesignAmmunition = ammunition
     w.Ammunition = ammunition
     
-    // ---- intelligently find the middle-point?
-    if (w.IsInFiringArc(0.0)) {
-        w.FiringAngle = 0.0
-    } else {
-        w.FiringAngle = firingArcStart
-    }
+    w.resetFiringAngle()
     w.EmplacementName = emplacementName
     
     w.WeaponType = WeaponTypeGun
@@ -90,18 +97,13 @@ func New1KgGun(emplacementName string, firingArcStart, firingArcEnd float64, amm
     return w
 }
 
-
 func New1MwLaser(emplacementName string, firingArcStart, firingArcEnd float64) *ShipWeapon {
     w := &ShipWeapon { }
     w.FiringArcStart = firingArcStart
     w.FiringArcEnd = firingArcEnd
     
-    // ---- intelligently find the middle-point?
-    if (w.IsInFiringArc(0.0)) {
-        w.FiringAngle = 0.0
-    } else {
-        w.FiringAngle = firingArcStart
-    }
+    w.resetFiringAngle()
+
     w.EmplacementName = emplacementName
     
     w.WeaponType = WeaponTypeLaser
@@ -111,6 +113,15 @@ func New1MwLaser(emplacementName string, firingArcStart, firingArcEnd float64) *
     w.DesignCycle = 1
     
     return w
+}
+
+func (w *ShipWeapon) resetFiringAngle() {
+    // ---- intelligently find the middle-point?
+    if (w.IsInFiringArc(0.0)) {
+        w.FiringAngle = 0.0
+    } else {
+        w.FiringAngle = w.FiringArcStart
+    }
 }
 
 func (s *ShipWeapon) IsInFiringArc(testAngle float64) bool {

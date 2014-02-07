@@ -18,11 +18,11 @@ func (p *PanelTitleScreen) ProcessInput(g *Game, ch rune, key termbox.Key) *Inpu
     if (g.GameStatus == GameStatusTitleScreen) {    
         switch ch {
             // Quit
-            case 's':
+            case '1':
                 //g.doSetupForDevelopment()
                 g.GameStatus = GameStatusPickShip
                 
-            case 'q': 
+            case 'Q', 'q': 
                 result.Exit = true
                 
             default:
@@ -133,8 +133,8 @@ func (p *PanelTitleScreen) displayNormal(g *Game, r *ConsoleRange) {
     
     switch g.GameStatus {
         case GameStatusTitleScreen:            
-            r.Com("[s]"," Start Game", 5, 19, black, white)
-            r.Com("[q]"," Quit", 5, 20, black, white)    
+            r.Com("[1]"," Start Game", 5, 19, black, white)
+            r.Com("[Q]"," Quit", 5, 20, black, white)    
             
         case GameStatusPickShip:
             r.Com("[1]", " Go Back", 5, 19, black, white)

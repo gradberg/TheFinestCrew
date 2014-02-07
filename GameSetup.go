@@ -89,7 +89,7 @@ func createPirateFighter(name string) *Ship {
     aiShip.MaxRotation = 18 // manueverable little thing
     aiShip.HitSize = 1.8
     aiShip.HitPoints = 10.0
-    aiShip.DesignName = "Pirate Fighter"    
+    aiShip.DesignName = "pirate fighter"    
     aiShip.Name = name
     aiShip.Weapons.PushBack(New1MwLaser("Main Weapon", 300, 60))    
     return aiShip

@@ -27,7 +27,9 @@ func (g *Game) DeterminePanelArrangement(panel interface{}) *DisplayResult {
     // screens as a result.
     
     if (g.GameStatus == GameStatusDeathScreen) {
-        // ---- to do
+        return overlayIfPanel(panel, &PanelDeathScreen{})
+    } else if (g.GameStatus == GameStatusNextRound) {
+        return overlayIfPanel(panel, &PanelNextRound{})
     } else if (g.GameStatus != GameStatusPlaying) {
         return overlayIfPanel(panel, &PanelTitleScreen{})
     }

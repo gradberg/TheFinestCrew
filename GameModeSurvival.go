@@ -9,15 +9,60 @@ func (g *Game) setupForStart() {
 }
 
 // returns a boolean indicating if the next round should start.
-func (g *Game) checkForNextRound() bool {
-    // ---- see if there are no non-destroyed non-player-ships left.
-    return false
+func (g *Game) checkForNextRound() bool {    
+    isNextRound := true
+    for se := g.Ships.Front(); se != nil; se = se.Next() {
+        s := se.Value.(*Ship)
+        
+        if (s != g.PlayerShip && s.IsDestroyed() == false) {
+            isNextRound = false
+        }
+    }
+    
+    // If the last enemey was JUST destroyed, delay one turn so that
+    // the player can see that it was destroyed just prior to 
+    if (isNextRound && !g.waitATurn) {
+        g.waitATurn = true
+        isNextRound = false
+    }
+    
+    if (isNextRound) {
+        g.totalDestroyedShips()
+        g.waitATurn = false
+    }    
+    return isNextRound
 }
 
 // returns a boolean indicating that the player lost the game. (Presumably their
 // ship was destroyed)
-func (g *Game) checkForLost() bool {
-    return false
+func (g *Game) checkForLost() bool {    
+    isDead := g.PlayerShip != nil && g.PlayerShip.IsDestroyed()
+    
+    // Just like round-over, wait one turn after the player is destroyed so that they can
+    // see that their ship is destroyed. In the future, this will maybe blank out their
+    // controls or whatnot, but for now its fine.
+    // (Or better yet, their various panels would show random destruction on them. It'd
+    //  be cool)
+    if (isDead && !g.waitATurn) {
+        g.waitATurn = true
+        isDead = false
+    }    
+    
+    if (isDead) {
+        g.totalDestroyedShips()
+        g.waitATurn = false
+    }
+    return isDead
+}
+
+func (g *Game) totalDestroyedShips() {
+    for se := g.Ships.Front(); se != nil; se = se.Next() {
+        s := se.Value.(*Ship)
+        
+        if (s != g.PlayerShip && s.IsDestroyed()) {
+            g.kills++
+        }
+    }
 }
 
 func (g *Game) setupForNextRound() {
@@ -52,7 +97,7 @@ func (g *Game) setupForNextRound() {
 
 
 func (g *Game) createRandomAiPirateFighter() *Ship {    
-    aiShip := createPirateFighter("Pirate Fither")
+    aiShip := createPirateFighter("Pirate Fighter")
     aiShip.Point = NewPoint(g.Rand.Float64() * 800.0 - 400.0, g.Rand.Float64() * 800.0 - 400.0).Round()
     aiShip.CrewMembers.PushBack(NewCrewMember("Unknown", "Scoundrel", NewAiPiratePilot(g), CrewRolePilot))
     return aiShip
