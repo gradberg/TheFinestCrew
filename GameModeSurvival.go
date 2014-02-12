@@ -3,6 +3,7 @@
 */
 
 package main
+import "fmt"
 
 func (g *Game) setupForStart() {
     g.createPlayerShip()
@@ -91,13 +92,13 @@ func (g *Game) setupForNextRound() {
     
     // Add a number of pirate ships based on the round + 1
     for i := 0; i <= g.round; i++ {
-        g.Ships.PushBack(g.createRandomAiPirateFighter())
+        g.Ships.PushBack(g.createRandomAiPirateFighter(i +1))
     }    
 }
 
 
-func (g *Game) createRandomAiPirateFighter() *Ship {    
-    aiShip := createPirateFighter("Pirate Fighter")
+func (g *Game) createRandomAiPirateFighter(shipSuffixNumber int) *Ship {    
+    aiShip := createPirateFighter(fmt.Sprintf("Pirate Fighter #%d", shipSuffixNumber))
     aiShip.Point = NewPoint(g.Rand.Float64() * 800.0 - 400.0, g.Rand.Float64() * 800.0 - 400.0).Round()
     aiShip.CrewMembers.PushBack(NewCrewMember("Unknown", "Scoundrel", NewAiPiratePilot(g), CrewRolePilot))
     return aiShip

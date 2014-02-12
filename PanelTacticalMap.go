@@ -249,7 +249,9 @@ func displayGrid(r *ConsoleRange, grid [][]spot) {
             isTrail := false       
             isLaser := false
             isDestroyed := false
-            switch grid[rowIndex][colIndex].spotType {
+            
+            st := grid[rowIndex][colIndex].spotType
+            switch st {
                 case spot_EMPTY: spot=map_BLANK                
                 case spot_TRAIL:
                     spot=map_BLANK
@@ -290,6 +292,9 @@ func displayGrid(r *ConsoleRange, grid [][]spot) {
             
             fg := termbox.ColorRed
             if (colIndex == centerX && rowIndex == centerY) {
+                fg = termbox.ColorWhite | termbox.AttrBold
+            } else if (spot == map_SHIPS || st == spot_SHIP || spot == map_PLANET_WITH_SHIPS) {
+                fg = termbox.ColorRed | termbox.AttrBold
             } else if isTrail {
                 fg = termbox.ColorWhite | termbox.AttrBold
             } else if isLaser {

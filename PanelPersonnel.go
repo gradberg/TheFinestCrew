@@ -111,7 +111,7 @@ func (p *PanelPersonnel) processInputCommanderSay(g *Game, ch rune, key termbox.
                     // ---- and needs to be made gender aware (another good reason for helper functions)
                     // ---- so the from crew and to crew needs to be passed in (as well as the target)            
                     helmsman := g.PlayerShip.GetCrewMemberForRole(CrewRoleHelmsman)
-                    g.EnqueueMessage(NewMessageSetDestination(g.ThePlayer.CrewMember, helmsman, g.ThePlayer.PersonnelHelmsmanTarget))
+                    g.EnqueueMessage(NewMessageSetDestinationTargeter(g.ThePlayer.CrewMember, helmsman, g.ThePlayer.PersonnelHelmsmanTarget))
                     
                     ps = PersonnelStatusNormal
                     result.TicksToPass = 1 
@@ -252,23 +252,37 @@ func (p *PanelPersonnel) displayNormal(g *Game, r *ConsoleRange) {
     for e := pcm.ReceivedMessages.Back(); e != nil && !fd.IsFull(); e = e.Prev() {
         m := e.Value.(*CrewMessage)
         
+        // See if this message was FROM the player, TO the player, overheard, or a status message
+        daString := ""
         fg := termbox.ColorBlack | termbox.AttrBold
-        if (m.TickReceived +1 == g.tick) {
-            fg = termbox.ColorWhite | termbox.AttrBold
-        } else if (m.TickReceived + 7 > g.tick) {
-            fg = termbox.ColorWhite
-        }
-        
-        
-        if (m.From != nil) {
-            fcm := m.From
-            //r.DisplayTextWithColor(fmt.Sprintf("[%s %s, %s]", fcm.FirstName, fcm.LastName, fcm.CrewRole.ToString()), 3, 2, termbox.ColorWhite | termbox.AttrBold, termbox.ColorBlack)            
+        if (g.ThePlayer.CrewMember == m.To) {        
+            if (m.TickReceived +1 == g.tick) {
+                fg = termbox.ColorWhite | termbox.AttrBold
+            } else if (m.TickReceived + 7 > g.tick) {
+                fg = termbox.ColorWhite
+            }            
+            if (m.From != nil) {
+                fcm := m.From
+                //fd.AddParagraph(fmt.Sprintf("[FROM %s %s, %s]", fcm.FirstName, fcm.LastName, fcm.CrewRole.ToString()), fg, termbox.ColorBlack)            
+                daString = fmt.Sprintf("%s %s, %s, says: ", fcm.FirstName, fcm.LastName, fcm.CrewRole.ToString())
+            }
             
-            fd.AddParagraph(fmt.Sprintf("  [%s %s, %s] %d", fcm.FirstName, fcm.LastName, fcm.CrewRole.ToString(), m.TickReceived), fg, termbox.ColorBlack)            
+        } else if (g.ThePlayer.CrewMember == m.From) {
+            daString = "You said: "
+        
+        } else if (m.IsStatusMessage) {            
+            if (m.TickReceived +1 == g.tick) {
+                fg = termbox.ColorBlue | termbox.AttrBold
+            } else {
+                fg = termbox.ColorBlue
+            }
+        
+        } else { // overheard message
+            daString = "You overheard: "
         }
-        //r.DisplayText(fmt.Sprintf("%5d", topMessage.TickReceived), w-6, 2)        
-        //r.DisplayText(topMessage.Message, 1, 3)
-        fd.AddParagraph(m.Message, fg, termbox.ColorBlack)
+        
+        // In the normal view, it does not show the tick received. In the full view, it will.
+        fd.AddParagraph(daString + m.Message, fg, termbox.ColorBlack)
     }
     
         

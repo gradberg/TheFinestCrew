@@ -3,6 +3,10 @@ package main
 import "math"
 import "strings"
 
+const MaxUint = ^uint(0) 
+const MinUint = 0 
+const MaxInt = int(MaxUint >> 1) 
+const MinInt = -(MaxInt - 1) 
 
 func TrimLength(runes []rune, length int) []rune {
     if len(runes) > length {
@@ -76,9 +80,17 @@ func GetOppositeDegrees(angle float64) float64 {
 }
 func AddAngles(angle1, angle2 float64) float64 {
     a := angle1 + angle2
-    if (a >= 360.0) { a -= 360.0 }
-    if (a < 0.0) { a += 360.0 }
-    return a
+    for {        
+        if (a >= 360.0) { 
+            a -= 360.0 
+            continue
+        }
+        if (a < 0.0) { 
+            a += 360.0 
+            continue
+        }
+        return a
+    }
 }
 
 type Point struct {
@@ -219,4 +231,11 @@ func intAbs(value int) int {
     return value
 }
 
-
+func PickRandomString(g *Game, messages ...string) string {
+    if (len(messages) == 0) { panic("PickRandomString must be called with at least one message") }
+    index := int(g.Rand.Float64() * float64(len(messages)))
+    return messages[index]
+}
+func modI(x, y int) int {
+    return int( math.Mod( float64(x), float64(y) ) )
+}

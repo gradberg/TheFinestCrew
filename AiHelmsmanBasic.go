@@ -57,6 +57,9 @@ func (ai *AiHelmsmanBasic) DoAction(s *Ship, g *Game, cm *CrewMember) int {
     // Go through received messages, and act on any that are relevant.
     for e := cm.GetFirstNewMessage(g); e != nil; e = e.Next() {
         m := e.Value.(*CrewMessage)
+        
+        // Make sure this message is TO me. Ignore otherwise
+        if (m.To != cm) { continue }
     
         switch (m.Information) {
             // assign as new orders

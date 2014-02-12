@@ -8,6 +8,8 @@ import "fmt"
 type CrewMessage struct {
     From *CrewMember
     To *CrewMember // should not be nil, as that indicates an Ai (or player?) tried to send something to someone who doesn't exist.
+    ToShip *Ship // this message is sent to all crew members aboard a ship
+    IsStatusMessage bool // indicates this was not from or to anyone, just a status message
     
     Information InformationEnum
     // information enum // Used by AI to 'understand' a message the player or another AI sent.
@@ -58,7 +60,7 @@ func NewMessageFullStop(from, to *CrewMember) *CrewMessage {
 func NewMessageSetCourse(from, to *CrewMember, courseSetter *CourseSetter) *CrewMessage {
     m := NewCrewMessage(from, to,            
         fmt.Sprintf(
-            "Mr. %s, set course for %03f°, %4.f ticks.", 
+            "Mr. %s, set course for %03.f°, %.f ticks.", 
             to.LastName, 
             courseSetter.Course,
             courseSetter.Speed,
@@ -69,17 +71,20 @@ func NewMessageSetCourse(from, to *CrewMember, courseSetter *CourseSetter) *Crew
     m.Speed = courseSetter.Speed
     return m
 }
-func NewMessageSetDestination(from, to *CrewMember, targeter *Targeter) *CrewMessage {
+func NewMessageSetDestinationTargeter(from, to *CrewMember, targeter *Targeter) *CrewMessage {
+    return NewMessageSetDestination(from, to, targeter.DesiredTarget, targeter.TargetType)
+}
+func NewMessageSetDestination(from, to *CrewMember, target ISpaceObject, targetType SettingTargetTypeEnum) *CrewMessage {
     m := NewCrewMessage(from, to,            
         fmt.Sprintf(
-            "Mr. %s, make our destination the %s %s.", 
+            "Mr. %s, make our destination the %s (%s).", 
             to.LastName, 
-            targeter.TargetType.ToString(),
-            targeter.DesiredTarget.GetName(),
+            target.GetName(),
+            targetType.ToString(),
         ),
     )
     m.Information = InformationSetDestination
-    m.Target = targeter.DesiredTarget
+    m.Target = target
     return m
 }
 func NewMessageEvasiveAction(from, to *CrewMember) *CrewMessage {
@@ -87,6 +92,12 @@ func NewMessageEvasiveAction(from, to *CrewMember) *CrewMessage {
         fmt.Sprintf("%s get us out of here!", to.LastName ),
     )
     m.Information = InformationEvasiveAction
+    return m
+}
+func NewShipStatusMessage(message string, ship *Ship) *CrewMessage {
+    m := NewCrewMessage(nil,nil, message)
+    m.ToShip = ship
+    m.IsStatusMessage = true
     return m
 }
 

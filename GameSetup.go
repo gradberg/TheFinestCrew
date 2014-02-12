@@ -34,7 +34,7 @@ func (g *Game) createPlayerShip() {
             g.ThePlayer.CrewMember = playerCrew
             g.ThePlayer.FireControlSelectedWeapon = g.PlayerShip.Weapons.Front().Value.(*ShipWeapon)
             g.PlayerShip.CrewMembers.PushBack(playerCrew)            
-            //g.PlayerShip.CrewMembers.PushBack(NewCrewMember("Roy", "Higgards", &AiHelmsmanBasic{}, CrewRoleHelmsman))
+            g.PlayerShip.CrewMembers.PushBack(NewCrewMember("Roy", "Higgards", &AiCommanderBasic{}, CrewRoleCommander))
         } else if (g.GameSetup.CrewRole == CrewRoleCommander) {
             playerCrew := NewCrewMember("Victor", "Snapes", nil, CrewRoleCommander)
             playerCrew.IsPlayer = true
@@ -72,7 +72,8 @@ func createMilitiaCorvette(name string) *Ship {
     p.Name = name
     p.DesignName = "militia corvette"
     p.HitSize = 3.7
-    p.HitPoints = 50.0
+    p.DesignHitPoints = 50.0    
+    p.HitPoints = p.DesignHitPoints
     p.Weapons.PushBack(New1KgGun("Main Cannon", 330, 30, 40))
     p.Weapons.PushBack(New1MwLaser("Fore Laser", 300, 60))
     p.Weapons.PushBack(New1MwLaser("Port Laser", 180, 300))
@@ -88,7 +89,8 @@ func createPirateFighter(name string) *Ship {
     aiShip.MaxBackwardThrust = 0.1
     aiShip.MaxRotation = 18 // manueverable little thing
     aiShip.HitSize = 1.8
-    aiShip.HitPoints = 10.0
+    aiShip.DesignHitPoints = 10.0
+    aiShip.HitPoints = aiShip.DesignHitPoints
     aiShip.DesignName = "pirate fighter"    
     aiShip.Name = name
     aiShip.Weapons.PushBack(New1MwLaser("Main Weapon", 300, 60))    

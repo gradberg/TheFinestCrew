@@ -144,18 +144,20 @@
 #
 # TODO #
 
--- Tactical map needs better highlighting of ships
   
 -- Commander AI and Player Helmsman
-  --- Personnel panel for helmsman to receive those orders
+  --- Manages fire control
+  @@@ Sends helmsman orders
+  @@@ Personnel panel for helmsman to receive those orders  
   --- If you play the helmsman, and you don't do what the commander says... what happens?
+  
 
 ## Gameplay cleanup
-  
--- Have messages SENT from you show up in personnel panel. It adds flavor when you see the message and the response, and helps the player remember what they've told everyone to do.
--- Fire Control: When target is selected, it should show if it is destroyed (as most ships are similiarly named)
+@@ Tactical map needs better highlighting of ships  
+@@ Have messages SENT from you show up in personnel panel. It adds flavor when you see the message and the response, and helps the player remember what they've told everyone to do.
+@@ Fire Control: When target is selected, it should show if it is destroyed (as most ships are similiarly named)
 -- Revise Tactical Analysis Panel. Its impossible to use.  
--- Add combat messages to Personnel panel (your ship being hit. The enemy shit being hit.
+@@ Add combat messages to Personnel panel (your ship being hit. The enemy shit being hit.
 -- Fix Console/Terminal?
 
 ## Deployment
@@ -167,7 +169,7 @@
 -- Mac build?
   
 // End of Playable Alpha 1  
-
+ 
 -- Cleanup
   --- Move ship interaction to an interface so that players and AI's have the same (predefined) access. 
     ---- With proper interfaces, the AI modules could be moved out to their own sub package, and can have a sort of business-logic layer for how many ticks a player or AI action costs (and when it ends)
@@ -185,6 +187,8 @@
     --- Shield Control panel
     --- Display on Tactical Analysis
     --- Incorporate into combat    
+
+-- Tactical Officer? (As weapon banks increase, A Commander will be unable to manage all of them combined with ordering the other crew members)
     
 -- Ship Subsystems
   --- Damage Control (used by Defense Officer)
@@ -197,6 +201,11 @@
   --- Somewhere have info on the ship you're all on. (maybe this would be on the personnel window)
   
 // End of Playable Alpha 2
+
+-- A fleet-ish mode? 
+  --- Have several corvettes take on a bunch of enemy fighters
+
+// End of Playable Alpha 3
   
 -- Additional weapons/combat:
   --- Projectiles have precision (in that, when they fire, they have a 'cone' that they fire into)

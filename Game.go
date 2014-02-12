@@ -60,7 +60,7 @@ type Game struct {
     
     Planets *list.List
     
-    Rand *rand.Rand    
+    Rand *rand.Rand
     
     Projectiles *list.List // Projectiles that are still flying around
     LaserProjectiles *list.List // List of lasers fired last tick (which is displayed on the map)
@@ -166,6 +166,9 @@ func (g *Game) processTick(ir *InputResult) {
         // Last process ship movement, as they are essentially the slowest objects.
         g.processShipMovement()        
         
+        // do this HERE, because 
+        g.processMessages()
+        
         g.tick++
     }       
 }
@@ -181,8 +184,11 @@ func (g *Game) processAiCharacters() {
                 c := ce.Value.(*CrewMember)
                 
                 if (c.IsPlayer) { continue }
-                
-                // ---- use the ticks number to control how many turns this crew member loses?
+               
+                // ---- use the ticks number to control how many turns this crew member loses?                
+                // ---- convert these parameters to a struct so that anything else in the future
+                //      is easy to add (and passing them around internally in the ai structure
+                //      is easy to write too)
                 c.Ai.DoAction(s,g,c)
             }
             
@@ -193,11 +199,34 @@ func (g *Game) processAiCharacters() {
         s.WasHit = false
     }   
     
+}
+
+func (g *Game) processMessages() {
     // go through each message and enqueue it in its receipients lists        
-    for e := g.PendingMessages.Front(); e != nil; e = e.Next() {
-        m := e.Value.(*CrewMessage)
+    for me := g.PendingMessages.Front(); me != nil; me = me.Next() {
+        m := me.Value.(*CrewMessage)
         m.TickReceived = g.tick
-        m.To.ReceivedMessages.PushBack(m)
+
+        // This is sent to a particular crewmember
+        if (m.To != nil) {        
+            m.To.ReceivedMessages.PushBack(m)
+            
+            // ---- Loop through the remaining crew members and have them overhear it.
+        
+
+            // also add this to the sending player's messages
+            if (m.From != nil) {
+                m.From.ReceivedMessages.PushBack(m)
+            }        
+        }
+        
+        // this is meant to be 'heard' by everyone on the ship
+        if (m.ToShip != nil) {
+            for ce := m.ToShip.CrewMembers.Front(); ce != nil; ce = ce.Next() {
+                c := ce.Value.(*CrewMember)
+                c.ReceivedMessages.PushBack(m)
+            }
+        }
     }
     g.PendingMessages.Init() // clear the list
 }
@@ -333,9 +362,25 @@ func (g *Game) processLasers() {
         
         p.Speed = closestDistance
         p.Heading = closestAngle
+
+        // Enqueue message for the ship being damaged
+        message := ""
+        if (s.HitPoints / s.DesignHitPoints) > 0.333 {
+            message = PickRandomString(g,
+                "The ship was hit by laser fire.", 
+                "You hear a faint buzzing sound as the ship encounters laser fire.",
+                "The lights flare brightly as the ship is hit by a laser.",
+            )
+        } else {
+            message = PickRandomString(g,
+                "Gaping holes are burned into the hull by laser fire.", 
+                "You hear a loud buzzing sound in the ship's electrical system as it is stuck by a laser.",
+                "Several light fixtures flare brightly and burn out as the ship is hit by a laser.",
+                "Computer consoles flash static as the ship is hit by laser fire.",
+            )
+        }                
+        g.PendingMessages.PushBack(NewShipStatusMessage(message, s))
         
-        
-                
     }
 }
 
@@ -369,10 +414,27 @@ func (g *Game) processProjectiles() {
                 
                 // Transfer impact to the ship's momentum IF IT IS A PROJECTILE OR MISSILE
                 s.DoAcceleration(p.Heading, damage / 5.0)
-                
                 s.WasHit = true
-            
                 didImpact = true
+
+                // Enqueue message for the ship being damaged
+                message := ""
+                if (s.HitPoints / s.DesignHitPoints) > 0.333 {
+                    message = PickRandomString(g,
+                        "The ship was hit by a projectile.", 
+                        "The ship shakes as it is hit by a projectile.",
+                        "The lights flicker as a projectile strikes the ship.",
+                    )
+                } else {
+                    message = PickRandomString(g,
+                        "The ship shudders violently, being hit by a projectile.", 
+                        "A projectile strikes the ship, breaching several compartments.",
+                        "The lights cut out for a moment after a projectile strikes the ship.",
+                        "Sparks fly from computer consoles as a projectile slams into the ship.",
+                    )
+                }                
+                g.PendingMessages.PushBack(NewShipStatusMessage(message, s))
+                
                 break // Stop looking for other ships to impact
             } else {            
             

@@ -48,7 +48,9 @@ type Ship struct {
     
     // Status, like damage
     
-    HitPoints float64 // 
+    HitPoints float64 // remaining hit points
+    DesignHitPoints float64 // maximum hit points
+    
     HitSize float64 // a 'sphere' representing how large of a ship this is, and thus how easy is it to
                     // hit with weapons. 
     
