@@ -127,7 +127,7 @@ func (h *ShipHelm) doAutoPilotFullStop() {
         } else {
             h.ThrottlePercentage = int(h.Ship.SpeedInUnitsPerTick * 100.0 / h.Ship.MaxForwardThrust)
         }
-        if h.maxAutoPilotPower() < h.ThrottlePercentage { h.ThrottlePercentage = h.maxAutoPilotPower() }
+        h.capThrottleBasedOnAutoPilotPower()
         h.AutoThrust = true
     } else {
         h.AutoThrust = false
@@ -142,6 +142,7 @@ func (h *ShipHelm) doAutoPilotCourse() {
     // if the speed it below desired, fire the engines 100%. If it above desired, turn them off.
     if (h.AutoPilotDesiredSpeed > h.Ship.SpeedInUnitsPerTick) {
         h.ThrottlePercentage = 100
+        h.capThrottleBasedOnAutoPilotPower()
         h.AutoThrust = true
     } else {
         h.AutoThrust = false
@@ -162,15 +163,23 @@ func (h *ShipHelm) doAutoPilotTarget() {
     modifierAngleInDegrees, distance = tp.Subtract(sp).ToVector()
     
     distance = distance // GO!    
-    
-    h.TurnTowardsAngle(modifierAngleInDegrees, h.maxAutoPilotPower())
+        
+    // Lets start with the very naive solution of turn towards the target, and keep
+    // the engines running the whole time.
+    h.TurnTowardsAngle(modifierAngleInDegrees, h.maxAutoPilotPower())    
+    h.ThrottlePercentage = 100
+    h.capThrottleBasedOnAutoPilotPower()
     h.AutoThrust = true
     
     
-    // ---- Lets start with the very naive solution of turn towards the target, and keep
-    // the engines running the whole time.
     
     
+}
+
+func (h *ShipHelm) capThrottleBasedOnAutoPilotPower() {
+    if h.maxAutoPilotPower() < h.ThrottlePercentage { 
+        h.ThrottlePercentage = h.maxAutoPilotPower() 
+    }
 }
 
 // Sets the helm to turn towards the given angle in the shortest direction, which the

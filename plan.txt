@@ -138,19 +138,15 @@
   @@@ Rounds should end the turn AFTER you kill everything (that way you can see why it ended)
   @@@ Intra-round screen  
   @@@ Death screen showing your kill count.
-
+  
+@@ Commander AI and Player Helmsman
+  @@@ Manages fire control
+  @@@ Sends helmsman orders
+  @@@ Personnel panel for helmsman to receive those orders  
   
 #
 #
 # TODO #
-
-  
--- Commander AI and Player Helmsman
-  --- Manages fire control
-  @@@ Sends helmsman orders
-  @@@ Personnel panel for helmsman to receive those orders  
-  --- If you play the helmsman, and you don't do what the commander says... what happens?
-  
 
 ## Gameplay cleanup
 @@ Tactical map needs better highlighting of ships  
@@ -206,6 +202,8 @@
   --- Have several corvettes take on a bunch of enemy fighters
 
 // End of Playable Alpha 3
+  
+-- If you play the helmsman, and you don't do what the commander says... what happens?
   
 -- Additional weapons/combat:
   --- Projectiles have precision (in that, when they fire, they have a 'cone' that they fire into)

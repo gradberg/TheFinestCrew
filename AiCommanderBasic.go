@@ -33,10 +33,6 @@ func (ai *AiCommanderBasic) DoAction(s *Ship, g *Game, cm *CrewMember) int {
     result = ai.doAimWeaponsAtRemainingEnemies(s,g,cm)
     if (result > 0) { return result }
 
-    
-    // Last, find any weapons that should be turned OFF to conserve either 
-    // ammunition or firing cycle
-    
     // ---- what about evasive action if the ship is taking too much damage
     
     return 0
@@ -112,6 +108,41 @@ func (ai *AiCommanderBasic) doAimWeaponsAtPrimaryTarget(s *Ship, g *Game, cm *Cr
 func (ai *AiCommanderBasic) doAimWeaponsAtRemainingEnemies(s *Ship, g *Game, cm *CrewMember) int {
     // Loop through each weapon from the top down, and make sure it is targeting the
     // closest enemy
+    for we := s.Weapons.Front(); we != nil; we = we.Next() {
+        w := we.Value.(*ShipWeapon)
+
+        var closestShip *Ship
+        closestDistance := float64(MaxInt)
+        for se := g.Ships.Front(); se != nil; se = se.Next() {
+            ts := se.Value.(*Ship)
+            
+            if (ts == s) { continue }
+            if (ts.IsDestroyed()) { continue }
+            // ---- verify it is an enemy ship
+            if (ai.isWeaponUsableAgainstShip(w, s, ts) == false) { continue }
+            
+            distance := ts.GetPoint().DistanceFrom(s.GetPoint())            
+            if (distance < closestDistance) {
+                closestShip = ts
+                closestDistance = distance
+            }
+        }
+        
+        // if there is no valid target, just turn off the weapon here. Note this means 
+        // the AI does not turn of ALL invalid targets in one turn like they are technically
+        // allowed to, but it shouldn't be a big deal at all.
+        if (closestShip == nil) {
+            w.AutoFire = false
+            // this does not take a tick, so do not return here.
+        } else if !(w.TargetType == TargetTypeTarget && closestShip == w.TargetShip) {
+            w.AutoFire = true
+            w.TargetType = TargetTypeTarget
+            w.TargetShip = closestShip
+            return 1
+        } else {
+            // do nothing. It wasn't cleared, it wasn't set. Move on to the next one.
+        }
+    }
     
     return 0
 }
@@ -119,35 +150,12 @@ func (ai *AiCommanderBasic) doAimWeaponsAtRemainingEnemies(s *Ship, g *Game, cm 
 func (ai *AiCommanderBasic) findUsableWeapons(playerShip, targetShip *Ship) []*ShipWeapon {
     results := []*ShipWeapon { }
     
-    // Projectile weapons are only within range if they are within 2 turns of hitting 
-    // the enemy
     for we := playerShip.Weapons.Front(); we != nil; we = we.Next() {
         w := we.Value.(*ShipWeapon)
         
         if ai.isWeaponUsableAgainstShip(w, playerShip, targetShip) {
             results = append(results, w)
         }
-        /*
-        // Skip if its out of cycle (as it'll be better to use a different gun
-        if (w.CurrentCycle > 0) { continue }
-        
-        // skip if out of ammunition or out of range
-        if (w.WeaponType == WeaponTypeGun) {
-            if (w.Ammunition == 0) { continue }
-            if (distance > w.DesignSpeed * 2) { continue }
-        } else if (w.WeaponType == WeaponTypeLaser) {
-            if (distance > w.DesignDistance) { continue }
-        } else {
-            LogWarn("AiCommanderBasic Weapon Type not defined!")
-        }
-        
-        // Check that it is in the firing angle
-        weaponAngle := AddAngles(bearing, - playerShip.ShipHeadingInDegrees)
-        if (w.IsInFiringArc(weaponAngle)) {
-            results = append(results, w)
-        }
-        */
-        
     }    
     
     return results
@@ -162,6 +170,8 @@ func (ai *AiCommanderBasic) isWeaponUsableAgainstShip(w *ShipWeapon, playerShip,
     // skip if out of ammunition or out of range
     if (w.WeaponType == WeaponTypeGun) {
         if (w.Ammunition == 0) { return false }
+        // Projectile weapons are only "within range" if they are within 2 turns of hitting 
+        // the enemy
         if (distance > w.DesignSpeed * 2) { return false }
     } else if (w.WeaponType == WeaponTypeLaser) {
         if (distance > w.DesignDistance) { return false }
