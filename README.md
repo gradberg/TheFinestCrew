@@ -1,3 +1,6 @@
+_Repo/Code Notes:_
+_This was a project to teach myself Google Go. I have not really touched it since 2014, so it would be quite out of date with the latest version of Go. I quite liked the theme and the way it was shaping up, so I may try to resuurect it in this or another language._
+
 # The Finest Crew #
 Spaceship roguelike written in Google Go.
 
